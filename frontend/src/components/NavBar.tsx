@@ -5,20 +5,14 @@ import { css } from 'styled-components'
 import styled from '../theme/styled'
 
 import { Stores } from '../stores'
-import { AuthStore } from '../stores/AuthStore'
 
 interface IProps {
   className?: string
-  authStore?: AuthStore,
 }
 
 @inject((stores: Stores) => ({
-  authStore: stores.authStore,
 }))
 export class NavBar extends React.PureComponent<IProps> {
-  handleLogout = (e : React.MouseEvent<HTMLElement>) : void => {
-    this.props.authStore!.logout()
-  }
   render() {
     return (
       <NavContainer className={this.props.className}>

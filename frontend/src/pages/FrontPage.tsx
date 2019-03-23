@@ -2,21 +2,20 @@ import * as React from 'react'
 import { inject } from 'mobx-react'
 import styled from '../theme/styled'
 import { MdSearch } from 'react-icons/md'
+import { Link } from 'react-router-dom'
 
 // import { Button } from '../elements/Button'
 import { Input } from '../elements/Input'
 
 import { Stores } from '../stores'
-import { AuthStore } from '../stores/AuthStore'
 
 interface IProps {
-  authStore?: AuthStore,
 }
 interface IState {
   searchText: string
 }
+
 @inject((stores: Stores) => ({
-  authStore: stores.authStore,
 }))
 export class FrontPage extends React.Component<IProps, IState> {
   state = {
@@ -38,13 +37,15 @@ export class FrontPage extends React.Component<IProps, IState> {
               onChange={val => this.setState({ searchText: val })}/>
         </SearchBox>
         <h2>Featured projects</h2>
+        <ul>
+          <li><Link to="projects/kubernetes/kubernetes">kubernetes/kubernetes</Link></li>
+        </ul>
       </FrontPageContainer>
     )
   }
 }
 
 const FrontPageContainer = styled.div`
-  margin: 40px 0 0 0;
 `
 const SearchBox = styled.div`
   flex-direction: column;

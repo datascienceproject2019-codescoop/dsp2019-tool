@@ -1,12 +1,9 @@
-import { AuthStore } from './AuthStore'
-import { UserStore } from './UserStore'
+import { ProjectStore } from './ProjectStore'
 
 export class Stores {
-  public authStore: AuthStore
-  public userStore: UserStore
+  public projectStore: ProjectStore
 
   constructor() {
-    this.authStore = new AuthStore()
-    this.userStore = new UserStore()
+    this.projectStore = new ProjectStore()
   }
 }

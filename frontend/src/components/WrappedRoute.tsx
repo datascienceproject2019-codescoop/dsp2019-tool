@@ -32,9 +32,9 @@ const MainWrapper = styled.div`
   font-family: 'Raleway', sans-serif;
 `
 const MainContainer = styled.main`
-  margin: auto;
+  margin: 40px auto 20px auto;
   max-width: 980px;
   @media only screen and (max-width: 1020px) {
-    margin: 20px;
+    margin: 40px 20px 20px 20px;
   }
 `

@@ -1,17 +1,17 @@
 import axios, { AxiosError } from 'axios'
 
-import { stores } from '../index'
+// import { stores } from '../index'
 
 const { REACT_APP_API_URL } = process.env
 export const defaultHeaders = {
   Accept: 'application/json',
   'Content-Type': 'application/json'
 }
-export const authenticatedHeaders = () => ({
-  Accept: 'application/json',
-  'Content-Type': 'application/json',
-  Authorization: `Bearer ${stores.authStore.jwt.token}`
-})
+// export const authenticatedHeaders = () => ({
+//   Accept: 'application/json',
+//   'Content-Type': 'application/json',
+//   Authorization: `Bearer ${stores.authStore.jwt.token}`
+// })
 
 /**
  * Generates requests using axios since fetch is slightly annoying.
