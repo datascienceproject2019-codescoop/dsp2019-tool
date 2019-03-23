@@ -7,7 +7,7 @@ import { FrontPage } from './pages/FrontPage'
 import { ProjectPage } from './pages/ProjectPage'
 
 export const Routes = () : React.ReactElement<any> => (
-  <BrowserRouter>
+  <BrowserRouter basename={process.env.PUBLIC_URL}>
     <Switch>
       <WrappedRoute exact path="/" component={FrontPage}/>
       <WrappedRoute exact path="/projects/:ownerName/:projectName" component={ProjectPage}/>
