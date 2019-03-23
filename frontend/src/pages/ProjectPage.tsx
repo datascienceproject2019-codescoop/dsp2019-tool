@@ -3,6 +3,8 @@ import { inject, observer } from 'mobx-react'
 import styled from '../theme/styled'
 import { RouteComponentProps } from 'react-router'
 
+import { LineChart } from '../components/Charts'
+
 import { Stores } from '../stores'
 import { ProjectStore } from '../stores/ProjectStore'
 // import { IProject } from '../types/project'
@@ -26,10 +28,18 @@ export class ProjectPage extends React.Component<IProps> {
         <header>
           <h1>{ownerName}/{projectName}</h1>
         </header>
-        <p>Is a cool project</p>
+        <p>Description goes here</p>
         <div>
-          <p>something</p>
+          <AttributesList>
+            <AttributesListItem>Stars Count: 33597</AttributesListItem>
+            <AttributesListItem>Language: Go</AttributesListItem>
+            <AttributesListItem>Forks Count: 11918</AttributesListItem>
+          </AttributesList>
         </div>
+        <ChartContainer>
+          <h2>Graph for commits and stars</h2>
+          <LineChart />
+        </ChartContainer>
       </Container>
     )
   }
@@ -37,13 +47,16 @@ export class ProjectPage extends React.Component<IProps> {
 
 const Container = styled.div`
 `
-// const UsersList = styled.ul`
-// `
-// const UsersListItem = styled.li`
-//   display: flex;
-//   flex-direction: column;
-//   margin: 0 0 10px 0;
-//   & > p {
-//     margin: 0 10px 0 0;
-//   }
-// `
+const AttributesList = styled.ul`
+`
+const AttributesListItem = styled.li`
+  display: flex;
+  flex-direction: column;
+  margin: 0 0 10px 0;
+  & > p {
+    margin: 0 10px 0 0;
+  }
+`
+const ChartContainer = styled.div`
+  margin: 20px 0 0 0;
+`
