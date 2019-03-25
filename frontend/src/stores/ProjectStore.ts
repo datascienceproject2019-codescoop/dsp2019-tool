@@ -10,9 +10,9 @@ export class ProjectStore {
   @action
   getProjects = async () => {
     this.loading = true
-    const result = await projectApi.getProjects()
+    const result = await projectApi.getProjects() as IProject[]
     runInAction(() => {
-      this.projects = result.users
+      this.projects = result
       this.loading = false
     })
   }

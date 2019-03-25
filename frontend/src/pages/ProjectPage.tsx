@@ -25,9 +25,7 @@ export class ProjectPage extends React.Component<IProps> {
     const { ownerName, projectName } = this.props.match.params
     return (
       <Container>
-        <header>
-          <h1>{ownerName}/{projectName}</h1>
-        </header>
+        <h1>{ownerName}/{projectName}</h1>
         <p>Description goes here</p>
         <div>
           <AttributesList>
