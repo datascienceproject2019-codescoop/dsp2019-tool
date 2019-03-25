@@ -1,0 +1,41 @@
+{
+  "name": "dsp2019-tool-frontend",
+  "version": "0.1.0",
+  "author": "Teemu Koivisto",
+  "homepage": "https://datascienceproject2019-codescoop.github.io/dsp2019-tool/",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "mobx": "^5.9.0",
+    "mobx-react": "^5.4.3",
+    "react": "^16.8.4",
+    "react-dom": "^16.8.4",
+    "react-icons": "^3.5.0",
+    "react-router": "^4.3.1",
+    "react-router-dom": "^4.3.1",
+    "react-scripts-ts": "3.1.0",
+    "recharts": "^1.5.0",
+    "styled-components": "^4.1.3"
+  },
+  "scripts": {
+    "start": "react-scripts-ts start",
+    "build": "react-scripts-ts build",
+    "test": "react-scripts-ts test --env=jsdom",
+    "eject": "react-scripts-ts eject",
+    "lint": "tslint --project ./ -c tslint.json",
+    "lint:fix": "tslint --fix --project ./ -c tslint.json",
+    "deploy": "rm -r ../static || true && npm run build && mv ./build/** ../"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.9",
+    "@types/node": "^11.10.5",
+    "@types/react": "^16.8.7",
+    "@types/react-dom": "^16.8.2",
+    "@types/react-router": "^4.4.4",
+    "@types/react-router-dom": "^4.3.1",
+    "@types/recharts": "^1.1.14",
+    "@types/styled-components": "4.0.3",
+    "tslint-config-airbnb": "^5.11.1",
+    "typescript": "^3.3.3333"
+  }
+}
