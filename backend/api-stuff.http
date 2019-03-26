@@ -1,0 +1,41 @@
+POST http://localhost:9001/api/stars/predict
+Accept: application/json
+Content-Type: application/json
+
+{  
+   "Java":"0",
+   "Pages enabled":"1",
+   "Issues enabled":"0",
+   "Scala":"0",
+   "PHP":"1",
+   "Python":"0",
+   "Default branch":"0",
+   "Size":"572",
+   "Contributors Count":"3",
+   "Forks Count":"2",
+   "Open Issues Count":"9",
+   "Watchers Count":"3",
+   "Emacs Lisp":"0",
+   "BSD-2-Clause":"0",
+   "JavaScript":"0",
+   "Wiki enabled":"0",
+   "MIT":"1",
+   "Pull requests enabled":"0",
+   "Fork":"0",
+   "HTML":"0",
+   "Other":"0",
+   "CSS":"0",
+   "Go":"0",
+   "Shell":"0",
+   "Objective-C":"0",
+   "SourceRank":"2",
+   "Description":"A Symfony 2 bundle to bind XML to PHP objects or PHP objects to XML using annotations",
+   "Name with Owner":"Level42/NotJaxbBundle",
+   "Created Timestamp":"2013-03-19 21:49:27 UTC",
+   "Updated Timestamp":"2014-06-16 11:56:54 UTC",
+   "Last pushed Timestamp":"2014-12-04 08:25:48 UTC",
+   "Homepage URL":"",
+   "Language":"PHP",
+   "Keywords":"",
+   "Stars Count":"3"
+}
