@@ -60,30 +60,34 @@ export class ProjectPage extends React.Component<IProps, IState> {
       <Container>
         { loading ? 'loading' : error ? error :
         <div>
-          <h1>{ownerName}/{projectName}</h1>
-          <div>
-            <AttributesList>
-              <AttributesListItem color="yellow">
-                <GoStar size={24}/>
-                <span>{p!['Stars Count']}</span>
-              </AttributesListItem>
-              <AttributesListItem color="lightgrey">
-                <GoFileCode size={24}/>
-                <span>{p!['Language']}</span>
-              </AttributesListItem>
-              <AttributesListItem color="green">
-                <GoRepoForked size={24}/>
-                <span>{p!['Forks Count']}</span>
-              </AttributesListItem>
-              <AttributesListItem color="orange">
-                <GoIssueOpened size={24}/>
-                <span>{p!['Open Issues Count']}</span>
-              </AttributesListItem>
-            </AttributesList>
-          </div>
-          <p><i>{p!.Description}</i></p>
-          <h2>Predicted</h2>
-          <p>Predicted star count: {p!.predicted_stars}</p>
+          <TopContainer>
+            <h1>{ownerName}/{projectName}</h1>
+            <div>
+              <AttributesList>
+                <AttributesListItem color="yellow">
+                  <GoStar size={24}/>
+                  <span>{p!['Stars Count']}</span>
+                </AttributesListItem>
+                <AttributesListItem color="lightgrey">
+                  <GoFileCode size={24}/>
+                  <span>{p!['Language']}</span>
+                </AttributesListItem>
+                <AttributesListItem color="green">
+                  <GoRepoForked size={24}/>
+                  <span>{p!['Forks Count']}</span>
+                </AttributesListItem>
+                <AttributesListItem color="orange">
+                  <GoIssueOpened size={24}/>
+                  <span>{p!['Open Issues Count']}</span>
+                </AttributesListItem>
+              </AttributesList>
+            </div>
+            <p><i>{p!.Description}</i></p>
+          </TopContainer>
+          <PredictedContainer>
+            <h2>Predicted stars: </h2>
+            <b>{p!.predicted_stars}</b>
+          </PredictedContainer>
           <ChartContainer>
             <h2>Graph for commits and stars</h2>
             <LineChart />
@@ -96,8 +100,20 @@ export class ProjectPage extends React.Component<IProps, IState> {
 }
 
 const Container = styled.div`
-  h1 {
+`
+const TopContainer = styled.header`
+  & > h1 {
     margin-bottom: 12px
+  }
+  & > p {
+    margin-top: 0px;
+  }
+`
+const PredictedContainer = styled.div`
+  align-items: baseline;
+  display: flex;
+  & > h2 {
+    margin-right: 28px;
   }
 `
 const AttributesList = styled.ul`
