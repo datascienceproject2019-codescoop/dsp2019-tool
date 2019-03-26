@@ -13,6 +13,7 @@ def load_ols_model():
 
 ols_model = load_ols_model()
 
+# Hard-coded list of features our model deems are most important
 featureList = ['Java', 'Pages enabled', 'Issues enabled', 'Scala', 'PHP',
        'Python', 'Default branch', 'Size', 'Contributors Count',
        'Forks Count', 'Open Issues Count', 'Watchers Count', 'Emacs Lisp',
@@ -20,16 +21,17 @@ featureList = ['Java', 'Pages enabled', 'Issues enabled', 'Scala', 'PHP',
        'Pull requests enabled', 'Fork', 'HTML', 'Other', 'CSS', 'Go',
        'Shell', 'Objective-C']
 
-@app.route('/api/stars/predict', methods=['GET', 'POST'])
+@app.route('/api/stars/predict', methods=['POST'])
 def ols_predict():
     body = pd.read_json(request.data, typ='series', dtype=int)
-    testx = pd.read_csv('testdata.csv')
-    testx = testx[featureList]
-    body_cut = body[featureList]
-    body_cut = pd.to_numeric(body_cut)
-    print(testx)
-    print(body_cut)
-    print(len(body_cut))
+    body_cut = body[featureList] # Pick only features used in the modeling
+    body_cut = pd.to_numeric(body_cut) # Convert all string values to ints etc if possible
+
+    # LOL, so what happens here is that the body is a Series object
+    # but which in order to convert to DataFrame must be warped with this black
+    # magic. Basically we turn the Series.values from 1-d vector to 2-d matrix
+    # so that Pandas understands it's a frame with a single row in it.
+    body_cut = pd.DataFrame([body_cut.values], index=[0], columns=body_cut.index)
     Ypredict = ols_model.predict(body_cut)
     return jsonify({ "prediction": Ypredict[0] })
 
