@@ -5,6 +5,11 @@ export interface IThemeColor {
   white: string
   primary: string
   secondary: string
+  yellow: string
+  purple: string
+  lightgrey: string
+  green: string
+  orange: string
 }
 
 export interface ISize {

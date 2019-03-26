@@ -7,7 +7,12 @@ export const defaultTheme : ITheme = {
     bg: '#fff',
     white: '#fff',
     primary: '#113f8b',
-    secondary: '#82B1FF'
+    secondary: '#82B1FF',
+    yellow: '#fff258',
+    lightgrey: '#dcdcdc85',
+    purple: '#ff8fe5',
+    green: '#58ff85', // '#27c300',
+    orange: '#ffd458',
   },
   spinner: {
     sizes: {

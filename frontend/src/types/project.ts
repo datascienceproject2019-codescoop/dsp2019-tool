@@ -1,13 +1,14 @@
 export interface IProject {
+  predicted_stars?: number
   'BSD-2-Clause': string // boolean
   CSS: string // boolean
-  'Contributors Count': string // number
+  'Contributors Count': number
   'Created Timestamp': string // "2015-01-15 02:20:32 UTC"
   'Default branch': string // boolean
   Description: string // "Silvertripe side bar menu widget"
   'Emacs Lisp': string // boolean
   Fork: string // boolean
-  'Forks Count': string // number
+  'Forks Count': number
   Go: string // boolean
   HTML: string // boolean
   'Homepage URL': string
@@ -26,12 +27,12 @@ export interface IProject {
   Python: string // boolean
   Scala: string // boolean
   Shell: string // boolean
-  Size: string // number
-  SourceRank: string // number
+  Size: number
+  SourceRank: number
   'Updated Timestamp': string // "2017-10-07 21:31:49 UTC"
-  'Watchers Count': string // number
+  'Watchers Count': number
   'Wiki enabled': string // boolean
   Language: string
   Keywords: string
-  'Stars Count': string // number
+  'Stars Count': number
 }

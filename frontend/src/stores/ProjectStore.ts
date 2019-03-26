@@ -16,4 +16,13 @@ export class ProjectStore {
       this.loading = false
     })
   }
+
+  predictStars = async (nameWithOwner: string) => {
+    this.loading = true
+    const result = await projectApi.predictStars(nameWithOwner)
+    return runInAction(() => {
+      this.loading = false
+      return result
+    })
+  }
 }
