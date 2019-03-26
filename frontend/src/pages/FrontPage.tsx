@@ -47,7 +47,7 @@ export class FrontPage extends React.Component<IProps, IState> {
         <h2>Featured projects</h2>
         <FeaturedList >
           { projects.map((p, i) =>
-          <li key={i}><Link to={p['Name with Owner']}>{p['Name with Owner']}</Link></li>
+          <li key={i}><Link to={`projects/${p['Name with Owner']}`}>{p['Name with Owner']}</Link></li>
           )}
         </FeaturedList >
       </Container>

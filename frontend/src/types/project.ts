@@ -31,4 +31,7 @@ export interface IProject {
   'Updated Timestamp': string // "2017-10-07 21:31:49 UTC"
   'Watchers Count': string // number
   'Wiki enabled': string // boolean
+  Language: string
+  Keywords: string
+  'Stars Count': string // number
 }
