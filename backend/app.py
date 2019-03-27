@@ -52,14 +52,14 @@ def ols_predict():
 
     try:
         predicted_stars = stars.predict_stars(json_dict)
+
+        return jsonify({ "prediction": predicted_stars })
     except OSError as e:
         print(e)
         if (e.errno == 2):
             return 'Pickle file containing the model not found', 500
         else:
             return 'Something went wrong ¯\\_(ツ)_/¯', 500
-
-    return jsonify({ "prediction": predicted_stars })
 
 
 if __name__ == "__main__":
