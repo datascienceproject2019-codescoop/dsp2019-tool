@@ -57,7 +57,7 @@ def ols_predict():
         if (e.errno == 2):
             return 'Pickle file containing the model not found', 500
         else:
-            return 'Something went wrong ¯\_(ツ)_/¯', 500
+            return 'Something went wrong ¯\\_(ツ)_/¯', 500
 
     return jsonify({ "prediction": predicted_stars })
 

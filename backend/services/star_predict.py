@@ -58,7 +58,10 @@ def _get_ols_model() -> RegressionResultsWrapper:
 
 
 def predict_stars(data: Dict[str, str]) -> float64:
-    """Predicts future stars of a Github projects"""
+    """
+    Predicts future stars of a Github projects
+    Can throw OSError, if model is missing.
+    """
     formatted = _get_proper_dict(data)
     
     frame = pd.DataFrame.from_dict(formatted, dtype=float64)
