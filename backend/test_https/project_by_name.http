@@ -1,0 +1,7 @@
+POST http://localhost:9001/api/projects/predict
+Accept: application/json
+Content-Type: application/json
+
+{
+    "nameWithOwner":"Cotya/composer-test-framework"
+}

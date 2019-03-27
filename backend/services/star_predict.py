@@ -59,8 +59,11 @@ def _get_ols_model() -> RegressionResultsWrapper:
 
 def predict_stars(data: Dict[str, str]) -> float64:
     """
-    Predicts future stars of a Github projects
-    Can throw OSError, if model is missing.
+    Predicts future stars of a Github projects. Regarding input: When using 
+    dataframes to call this function, turn them to dictionaries as follows:
+    `df.to_dict(orient='records')`. Depending on context it might return an 
+    array, when additional call is required as follows: `array[0]`.
+    Can throw OSError, if model-file is missing.
     """
     formatted = _get_proper_dict(data)
     
