@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from services import star_predict as stars
 import pickle
 import pandas as pd
 
@@ -47,17 +48,19 @@ def get_predicted_project():
 
 @app.route('/api/stars/predict', methods=['POST'])
 def ols_predict():
-    body = pd.read_json(request.data, typ='series', dtype=int)
-    body_cut = body[featureList] # Pick only features used in the modeling
-    body_cut = pd.to_numeric(body_cut) # Convert all string values to ints etc if possible
+    json_dict = request.get_json()
 
-    # LOL, so what happens here is that the body is a Series object
-    # but which in order to convert to DataFrame must be warped with this black
-    # magic. Basically we turn the Series.values from 1-d vector to 2-d matrix
-    # so that Pandas understands it's a frame with a single row in it.
-    body_cut = pd.DataFrame([body_cut.values], index=[0], columns=body_cut.index)
-    predicted_stars = ols_model.predict(body_cut)
-    return jsonify({ "prediction": predicted_stars[0] })
+    try:
+        predicted_stars = stars.predict_stars(json_dict)
+    except OSError as e:
+        print(e)
+        if (e.errno == 2):
+            return 'Pickle file containing the model not found', 500
+        else:
+            return 'Something went wrong ¯\_(ツ)_/¯', 500
+
+    return jsonify({ "prediction": predicted_stars })
+
 
 if __name__ == "__main__":
     import os
