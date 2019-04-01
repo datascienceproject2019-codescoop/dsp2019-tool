@@ -56,12 +56,13 @@ export class ProjectPage extends React.Component<IProps, IState> {
     const { ownerName, projectName } = this.props.match.params
     const { loading, error } = this.state
     const p = this.state.fetchedProject
+    const name = `${ownerName}/${projectName}`
     return (
       <Container>
         { loading ? 'loading' : error ? error :
         <div>
           <TopContainer>
-            <h1>{ownerName}/{projectName}</h1>
+            <h1><a href={`https://github.com/${name}`} target="__blank">{name}</a></h1>
             <div>
               <AttributesList>
                 <AttributesListItem color="yellow">
@@ -110,7 +111,7 @@ const TopContainer = styled.header`
   }
 `
 const PredictedContainer = styled.div`
-  align-items: baseline;
+  align-items: center;
   display: flex;
   & > h2 {
     margin-right: 28px;

@@ -35,7 +35,7 @@ export class FrontPage extends React.Component<IProps, IState> {
         <header>
           <h1>Data science project 2019: Codescoop</h1>
           <p>
-            <i>A simple app, to model crap.</i>
+            <i>Is a library good or not, we'll show you!</i>
           </p>
         </header>
         <SearchBox>
