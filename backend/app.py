@@ -21,7 +21,10 @@ def get_predicted_project():
     
     name = body['nameWithOwner']
 
-    repos = gh_api.find_repos_by_name(name)
+    #repos = gh_api.find_repos_by_name(name)
+
+    repos = gh_api.find_repositories_by_name('ArktinenSieni/discotetris')
+    print(repos.columns.tolist())
 
     predicted_stars = []
 
