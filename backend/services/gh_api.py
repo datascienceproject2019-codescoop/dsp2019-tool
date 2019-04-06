@@ -1,7 +1,8 @@
 import pandas as pd
 import requests
+import json
 from pandas.core.frame import DataFrame
-from typing import List
+from typing import List, Dict
 
 _test500 = None
 _api_address = 'https://api.github.com'
@@ -29,12 +30,36 @@ def find_repos_by_name(name: str) -> List[DataFrame]:
 
     return found
 
-def find_repositories_by_name(name: str) -> List[DataFrame]:
-    address = _api_address + '/repositories?q=' + name
+def find_repositories_by_fullname(name: str) -> List[Dict[str, str]]:
+    address = _api_address + '/search/repositories?q=' + name
+    response = requests.get(address).content
+    loaded = json.loads(response)
 
-    df = pd.read_json(requests.get(address).content)
+    return loaded['items']
 
-    if (len(df) <= 1):
-        df = [df]
 
-    return df
+def find_langs_by_fullname(name: str) -> Dict[str, str]:
+    address = _api_address + '/repos/' + name + '/languages'
+
+    response = requests.get(address).content
+
+    return json.loads(response)
+
+
+def count_items_by_link(address: str) -> int:
+    response = requests.get(address).content
+
+    json_list = json.loads(response)
+
+    return len(json_list)
+
+
+def get_open_issues_by_fullname(name: str):
+    """
+    Returns dict as {'total_count': 0, 'incomplete_results': False, 'items': []}
+    """
+    address = _api_address + '/search/issues?q=' + name + '+state:open'
+    response = requests.get(address).content
+
+    return json.loads(response)
+

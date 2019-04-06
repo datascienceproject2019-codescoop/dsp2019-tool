@@ -8,33 +8,33 @@ from statsmodels.regression.linear_model import RegressionResultsWrapper
 _ols_model = None
 
 # Hard-coded list of features our model deems are most important
-_featureList = [
-    'Java', 
-    'Pages enabled', 
-    'Issues enabled', 
-    'Scala', 
-    'PHP',
-    'Python', 
-    'Default branch', 
-    'Size', 
-    'Contributors Count',
-    'Forks Count', 
-    'Open Issues Count', 
-    'Watchers Count', 
-    'Emacs Lisp',
-    'BSD-2-Clause', 
-    'JavaScript', 
-    'Wiki enabled', 
-    'MIT',
-    'Pull requests enabled', 
-    'Fork', 
-    'HTML', 
-    'Other', 
-    'CSS', 
-    'Go',
-    'Shell', 
-    'Objective-C'
-    ]
+_featureList = {
+    'Java'                  : (lambda data: _extract_boolean_key(data, 'Java')), 
+    'Pages enabled'         : (lambda data: _extract_boolean_key(data, 'has_pages')), 
+    'Issues enabled'        : (lambda data: _extract_boolean_key(data, 'has_issues')), 
+    'Scala'                 : (lambda data: _extract_boolean_key(data, 'Scala')), 
+    'PHP'                   : (lambda data: _extract_boolean_key(data, 'PHP')),
+    'Python'                : (lambda data: _extract_boolean_key(data, 'Python')), 
+    'Default branch'        : (lambda data: _extract_value(data, 'default_branch')), 
+    'Size'                  : (lambda data: _extract_value(data, 'size')), 
+    'Contributors Count'    : (lambda data: _extract_value(data, 'forks')),
+    'Forks Count'           : (lambda data: _extract_value(data, 'Contributors Count')), 
+    'Open Issues Count'     : (lambda data: _extract_value(data, 'Open Issues Count')), 
+    'Watchers Count'        : (lambda data: _extract_value(data, 'watchers')), 
+    'Emacs Lisp'            : (lambda data: _extract_boolean_key(data, 'Emacs Lisp')),
+    'BSD-2-Clause'          : (lambda data: _license_equals(data, 'bsd-2-clause')), 
+    'JavaScript'            : (lambda data: _extract_boolean_key(data, 'JavaScript')), 
+    'Wiki enabled'          : (lambda data: return 1 if data['has_wiki'] == True else return 0), 
+    'MIT'                   : (lambda data: _license_equals(data, 'mit')),
+    'Pull requests enabled' : -1, 
+    'Fork'                  : 0, 
+    'HTML'                  : (lambda data: _extract_boolean_key(data, 'HTML')), 
+    'Other'                 : (lambda data: _other_prog_lang(data)), 
+    'CSS'                   : (lambda data: _extract_boolean_key(data, 'CSS')), 
+    'Go'                    : (lambda data: _extract_boolean_key(data, 'Go')),
+    'Shell'                 : (lambda data: _extract_boolean_key(data, 'Shell')), 
+    'Objective-C'           : (lambda data: _extract_boolean_key(data, 'Objective-C'))
+}
 
 
 def _get_proper_dict(data: Dict[str, str]) -> Dict[str, List[str]]:
@@ -69,10 +69,49 @@ def predict_stars(data: Dict[str, str]) -> float64:
     
     frame = pd.DataFrame.from_dict(formatted, dtype=float64)
     # filter the dataframe
-    frame = frame[_featureList]
+    frame = frame[_featureList.keys()]
 
     model = _get_ols_model()
 
     prediction = model.predict(frame)
 
     return prediction[0]
+
+def _extract_boolean_key(data: Dict[str, str], key: str) -> int:
+    if key in data.keys():
+        return 1
+    
+    return 0
+
+
+def _extract_value(data, key: str):
+    if key in data.keys():
+        return data[key]
+    
+    return ''
+
+
+def predict_gh_data(data) -> float64:
+    """
+    Following the _featureList
+    """
+    dict_to_predict = {}
+    
+    return 42.0
+
+def _license_equals(data, license_key: str) -> int:
+    return data['license']['key'] == license_key
+
+def _other_prog_lang(data) -> int:
+    result = False
+    important_prog_lang = [
+        'Java', 'HTML', 'Scala', 'PHP', 'Python', 'JavaScript', 'CSS', 'Go', 
+        'Shell', 'Objective-C'
+        ]
+
+    keys = data.keys()
+
+    for lang in important_prog_lang:
+        result = result || lang in keys
+
+    return !result
