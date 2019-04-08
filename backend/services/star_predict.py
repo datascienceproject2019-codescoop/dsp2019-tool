@@ -4,6 +4,7 @@ from numpy import float64
 from typing import Dict, List
 from statsmodels.regression.linear_model import RegressionResultsWrapper
 
+OLS_MODEL_PATH = 'models/ols.pickle'
 # Don't call this one, call _get_ols_model() instead
 _ols_model = None
 
@@ -51,7 +52,7 @@ def _get_ols_model() -> RegressionResultsWrapper:
     global _ols_model
 
     if (_ols_model is None):
-        with open('models/pickle_model', 'rb') as pmodel:  
+        with open(OLS_MODEL_PATH, 'rb') as pmodel:  
             _ols_model = pickle.load(pmodel)
 
     return _ols_model

@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from services import star_predict as stars
+from services import knn
 from services import gh_api
 
 app = Flask(__name__)
@@ -54,13 +55,22 @@ def get_predicted_project():
 
     repos = _get_gh_repo_by_name(name)
 
-    try:
-        for r in repos:
-            #predicted_stars = _predict_mock_data(r, predicted_stars)
-            star_pred = stars.predict_gh_data(r)
-            predicted_stars.append({ 'name': r['full_name'], 'prediction': star_pred })
+    if len(repos) == 0:
+        return 'No project found with given name "{}"'.format(name), 404
+    if len(repos) > 1:
+        return 'Somehow you managed to find multiple projects with the same name "{}" and break me :('.format(name), 400
 
-        return jsonify({ 'predictions': predicted_stars })
+    repo = repos[0]
+
+    try:
+        predicted_stars = stars.predict_gh_data(repo)
+        computed_knn = knn.compute_knn(name)
+
+        repo['predicted_stars'] = predicted_stars
+        repo['knn_distances'] = computed_knn[0].tolist()
+        repo['knn_nearest'] = computed_knn[1].tolist()
+
+        return jsonify(repo)
     except OSError as e:
         print(e)
         if (e.errno == 2):
