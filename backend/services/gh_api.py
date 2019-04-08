@@ -16,6 +16,31 @@ def _get_test_data() -> DataFrame:
     return _test500
 
 
+
+def _other_prog_lang(data) -> int:
+    has_major_langs = False
+    important_prog_lang = [
+        'Java', 'HTML', 'Scala', 'PHP', 'Python', 'JavaScript', 'CSS', 'Go', 
+        'Shell', 'Objective-C'
+        ]
+
+    keys = data.keys()
+
+    for lang in important_prog_lang:
+        if lang in keys:
+            has_major_langs = True
+
+    if (has_major_langs):
+        return 0
+    else:
+        return 1
+
+
+def _boolean_to_binary(data, column: str) -> int:
+    if (data[column]):
+        return 1
+    else:
+        return 0
 def get_projects() -> DataFrame:
     return _get_test_data()
 
@@ -77,4 +102,3 @@ def get_branch_index(branches_url: str, branch_name: str) -> int:
             branch_index = i
 
     return branch_index
-

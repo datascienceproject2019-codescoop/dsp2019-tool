@@ -7,12 +7,6 @@ app = Flask(__name__)
 cors = CORS(app, resources={r"*": {"origins": "*"}})
 
 
-@app.route('/api/projects', methods=['GET'])
-def get_projects():
-    projects = gh_api.get_projects()
-    return projects.to_json(orient='records')
-
-
 def _get_gh_repo_by_name(name: str):
     """
     Returns json turned into dictionary. Gathers several API-calls to produce 
@@ -32,6 +26,22 @@ def _get_gh_repo_by_name(name: str):
     return repos
 
 
+def _predict_mock_data(repo_df, predictions):
+    as_dict = repo_df.to_dict(orient='records')[0]
+    r_prediction = stars.predict_stars(as_dict)
+    r_name = as_dict['Name with Owner'][0]
+    
+    predictions.append({ 'name': r_name, 'prediction': r_prediction })
+
+    return predictions
+
+
+@app.route('/api/projects', methods=['GET'])
+def get_projects():
+    projects = gh_api.get_projects()
+    return projects.to_json(orient='records')
+
+
 @app.route('/api/projects/predict', methods=['POST'])
 def get_predicted_project():
     body = request.get_json()
@@ -42,16 +52,13 @@ def get_predicted_project():
 
     predicted_stars = []
 
-    repos = gh_api.find_repos_by_name(name)
+    repos = _get_gh_repo_by_name(name)
 
     try:
         for r in repos:
-            as_dict = r.to_dict(orient='records')[0]
-
-            r_prediction = stars.predict_stars(as_dict)
-            r_name = as_dict['Name with Owner'][0]
-            
-            predicted_stars.append({ 'name': r_name, 'prediction': r_prediction })
+            #predicted_stars = _predict_mock_data(r, predicted_stars)
+            star_pred = stars.predict_gh_data(r)
+            predicted_stars.append({ 'name': r['full_name'], 'prediction': star_pred })
 
         return jsonify({ 'predictions': predicted_stars })
     except OSError as e:

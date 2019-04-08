@@ -26,8 +26,8 @@ _featureList = {
     'JavaScript'            : (lambda data: _extract_boolean_key(data, 'JavaScript')), 
     'Wiki enabled'          : (lambda data: _boolean_to_binary(data, 'has_wiki')),
     'MIT'                   : (lambda data: _license_equals(data, 'mit')),
-    'Pull requests enabled' : (lambda data: -1), 
-    'Fork'                  : (lambda data: 0), 
+    'Pull requests enabled' : (lambda data: 0), # What this value means?
+    'Fork'                  : (lambda data: 0), # What this value means?
     'HTML'                  : (lambda data: _extract_boolean_key(data, 'HTML')), 
     'Other'                 : (lambda data: _other_prog_lang(data)), 
     'CSS'                   : (lambda data: _extract_boolean_key(data, 'CSS')), 
@@ -57,6 +57,46 @@ def _get_ols_model() -> RegressionResultsWrapper:
     return _ols_model
 
 
+def _extract_boolean_key(data: Dict[str, str], key: str) -> int:
+    if key in data.keys():
+        return 1
+    
+    return 0
+
+
+def _extract_value(data, key: str):
+    if key in data.keys():
+        return data[key]
+    
+    return ''
+
+
+def _other_prog_lang(data) -> int:
+    has_major_langs = False
+    important_prog_lang = [
+        'Java', 'HTML', 'Scala', 'PHP', 'Python', 'JavaScript', 'CSS', 'Go', 
+        'Shell', 'Objective-C'
+        ]
+
+    keys = data.keys()
+
+    for lang in important_prog_lang:
+        if lang in keys:
+            has_major_langs = True
+
+    if (has_major_langs):
+        return 0
+    else:
+        return 1
+
+
+def _boolean_to_binary(data, column: str) -> int:
+    if (data[column]):
+        return 1
+    else:
+        return 0
+
+
 def predict_stars(data: Dict[str, str]) -> float64:
     """
     Predicts future stars of a Github projects. Regarding input: When using 
@@ -76,19 +116,6 @@ def predict_stars(data: Dict[str, str]) -> float64:
     prediction = model.predict(frame)
 
     return prediction[0]
-
-def _extract_boolean_key(data: Dict[str, str], key: str) -> int:
-    if key in data.keys():
-        return 1
-    
-    return 0
-
-
-def _extract_value(data, key: str):
-    if key in data.keys():
-        return data[key]
-    
-    return ''
 
 
 def predict_gh_data(data) -> float64:
@@ -116,31 +143,5 @@ def _license_equals(data, license_key: str) -> int:
         else:
             return 0
     except TypeError:
-        return 0
-
-
-def _other_prog_lang(data) -> int:
-    has_major_langs = False
-    important_prog_lang = [
-        'Java', 'HTML', 'Scala', 'PHP', 'Python', 'JavaScript', 'CSS', 'Go', 
-        'Shell', 'Objective-C'
-        ]
-
-    keys = data.keys()
-
-    for lang in important_prog_lang:
-        if lang in keys:
-            has_major_langs = True
-
-    if (has_major_langs):
-        return 0
-    else:
-        return 1
-
-
-def _boolean_to_binary(data, column: str) -> int:
-    if (data[column]):
-        return 1
-    else:
         return 0
     
