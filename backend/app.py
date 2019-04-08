@@ -13,6 +13,25 @@ def get_projects():
     return projects.to_json(orient='records')
 
 
+def _get_gh_repo_by_name(name: str):
+    """
+    Returns json turned into dictionary. Gathers several API-calls to produce 
+    required fields for star prediction
+    """
+
+    repos = gh_api.find_repositories_by_fullname(name)
+
+    for i, repo in enumerate(repos): 
+        langs = gh_api.find_langs_by_fullname(repo['full_name'])
+        repos[i] = {**repo, **langs}
+
+        repos[i]['Contributors Count'] = gh_api.count_items_by_link(repo['contributors_url'])
+        repos[i]['Open Issues Count'] = gh_api.get_open_issues_by_fullname(repo['full_name'])['total_count']
+        repos[i]['Default branch'] = gh_api.get_branch_index(repo['branches_url'], repo['default_branch'])
+    
+    return repos
+
+
 @app.route('/api/projects/predict', methods=['POST'])
 def get_predicted_project():
     body = request.get_json()
@@ -20,9 +39,6 @@ def get_predicted_project():
         return 'nameWithOwner missing from JSON', 400
     
     name = body['nameWithOwner']
-
-    #gh_api.find_repositories_by_name('ArktinenSieni/discotetris')
-    gh_api.find_langs_by_fullname('ArktinenSieni/discotetris')
 
     predicted_stars = []
 

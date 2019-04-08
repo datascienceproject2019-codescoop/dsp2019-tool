@@ -10,12 +10,12 @@ _ols_model = None
 # Hard-coded list of features our model deems are most important
 _featureList = {
     'Java'                  : (lambda data: _extract_boolean_key(data, 'Java')), 
-    'Pages enabled'         : (lambda data: _extract_boolean_key(data, 'has_pages')), 
-    'Issues enabled'        : (lambda data: _extract_boolean_key(data, 'has_issues')), 
+    'Pages enabled'         : (lambda data: _boolean_to_binary(data, 'has_pages')), 
+    'Issues enabled'        : (lambda data: _boolean_to_binary(data, 'has_issues')), 
     'Scala'                 : (lambda data: _extract_boolean_key(data, 'Scala')), 
     'PHP'                   : (lambda data: _extract_boolean_key(data, 'PHP')),
     'Python'                : (lambda data: _extract_boolean_key(data, 'Python')), 
-    'Default branch'        : (lambda data: _extract_value(data, 'default_branch')), 
+    'Default branch'        : (lambda data: _extract_value(data, 'Default branch')), 
     'Size'                  : (lambda data: _extract_value(data, 'size')), 
     'Contributors Count'    : (lambda data: _extract_value(data, 'forks')),
     'Forks Count'           : (lambda data: _extract_value(data, 'Contributors Count')), 
@@ -24,10 +24,10 @@ _featureList = {
     'Emacs Lisp'            : (lambda data: _extract_boolean_key(data, 'Emacs Lisp')),
     'BSD-2-Clause'          : (lambda data: _license_equals(data, 'bsd-2-clause')), 
     'JavaScript'            : (lambda data: _extract_boolean_key(data, 'JavaScript')), 
-    'Wiki enabled'          : (lambda data: return 1 if data['has_wiki'] == True else return 0), 
+    'Wiki enabled'          : (lambda data: _boolean_to_binary(data, 'has_wiki')),
     'MIT'                   : (lambda data: _license_equals(data, 'mit')),
-    'Pull requests enabled' : -1, 
-    'Fork'                  : 0, 
+    'Pull requests enabled' : (lambda data: -1), 
+    'Fork'                  : (lambda data: 0), 
     'HTML'                  : (lambda data: _extract_boolean_key(data, 'HTML')), 
     'Other'                 : (lambda data: _other_prog_lang(data)), 
     'CSS'                   : (lambda data: _extract_boolean_key(data, 'CSS')), 
@@ -96,14 +96,31 @@ def predict_gh_data(data) -> float64:
     Following the _featureList
     """
     dict_to_predict = {}
+
+    for key, fun in _featureList.items():
+        dict_to_predict[key] = fun(data)
+
+    dict_to_predict = _get_proper_dict(dict_to_predict)
+
+    frame = pd.DataFrame.from_dict(dict_to_predict, dtype=float64)
+
+    model = _get_ols_model()
     
-    return 42.0
+    return model.predict(frame)[0]
+
 
 def _license_equals(data, license_key: str) -> int:
-    return data['license']['key'] == license_key
+    try:
+        if (data['license']['key'] == license_key):
+            return 1
+        else:
+            return 0
+    except TypeError:
+        return 0
+
 
 def _other_prog_lang(data) -> int:
-    result = False
+    has_major_langs = False
     important_prog_lang = [
         'Java', 'HTML', 'Scala', 'PHP', 'Python', 'JavaScript', 'CSS', 'Go', 
         'Shell', 'Objective-C'
@@ -112,6 +129,18 @@ def _other_prog_lang(data) -> int:
     keys = data.keys()
 
     for lang in important_prog_lang:
-        result = result || lang in keys
+        if lang in keys:
+            has_major_langs = True
 
-    return !result
+    if (has_major_langs):
+        return 0
+    else:
+        return 1
+
+
+def _boolean_to_binary(data, column: str) -> int:
+    if (data[column]):
+        return 1
+    else:
+        return 0
+    

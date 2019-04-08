@@ -63,3 +63,18 @@ def get_open_issues_by_fullname(name: str):
 
     return json.loads(response)
 
+
+def get_branch_index(branches_url: str, branch_name: str) -> int:
+    branch_url = branches_url.split('{')[0]
+
+    response = requests.get(branch_url).content
+    branches = json.loads(response)
+
+    branch_index = 0
+
+    for i, branch in enumerate(branches):
+        if branch['name'] == branch_name:
+            branch_index = i
+
+    return branch_index
+
