@@ -11,9 +11,10 @@ export class ProjectStore {
   getProjects = async () => {
     this.loading = true
     const result = await projectApi.getProjects() as IProject[]
-    runInAction(() => {
+    return runInAction(() => {
       this.projects = result
       this.loading = false
+      return result
     })
   }
 

@@ -9,11 +9,14 @@ import {
   GoFileCode
 } from 'react-icons/go'
 
-import { LineChart } from '../components/Charts'
+// import {
+//   ScatterChart,
+// } from '../components/Charts'
+import { KNNTable } from '../components/KNNTable'
 
 import { Stores } from '../stores'
 import { ProjectStore } from '../stores/ProjectStore'
-import { IProject } from '../types/project'
+import { IProjectPredicted } from '../types/project'
 import { StyledComponentClass } from 'styled-components'
 import { ITheme } from '../types/theme'
 
@@ -23,7 +26,7 @@ interface IProps extends RouteComponentProps<{ownerName: string, projectName: st
 interface IState {
   loading: boolean
   error?: string
-  fetchedProject?: IProject
+  fetchedProject?: IProjectPredicted
 }
 
 @inject((stores: Stores) => ({
@@ -57,10 +60,18 @@ export class ProjectPage extends React.Component<IProps, IState> {
     const { loading, error } = this.state
     const p = this.state.fetchedProject
     const name = `${ownerName}/${projectName}`
+    if (loading || error) {
+      return (
+        <Container>
+          <LoadingOrErrorMsg>
+            <p>{ loading ? 'loading' : error }</p>
+          </LoadingOrErrorMsg>
+        </Container>
+      )
+    }
     return (
       <Container>
-        { loading ? 'loading' : error ? error :
-        <div>
+        <Wrapper>
           <TopContainer>
             <h1><a href={`https://github.com/${name}`} target="__blank">{name}</a></h1>
             <div>
@@ -90,17 +101,26 @@ export class ProjectPage extends React.Component<IProps, IState> {
             <b>{p!.predicted_stars}</b>
           </PredictedContainer>
           <ChartContainer>
-            <h2>Graph for commits and stars</h2>
-            <LineChart />
+            <h2>Similar projects</h2>
+            <KNNTable names={p!.knn_names} distances={p!.knn_distances}/>
           </ChartContainer>
-        </div>
-        }
+        </Wrapper>
       </Container>
     )
   }
 }
 
 const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`
+const LoadingOrErrorMsg = styled.div`
+  margin-top: 100px;
 `
 const TopContainer = styled.header`
   & > h1 {
@@ -113,6 +133,7 @@ const TopContainer = styled.header`
 const PredictedContainer = styled.div`
   align-items: center;
   display: flex;
+  justify-content: flex-start;
   & > h2 {
     margin-right: 28px;
   }
@@ -133,5 +154,5 @@ const AttributesListItem: StyledComponentClass<{color: string}, ITheme> = styled
   }
 `
 const ChartContainer = styled.div`
-  margin: 20px 0 0 0;
+  margin: 0 0 0 0;
 `
