@@ -1,5 +1,4 @@
 export interface IProject {
-  predicted_stars?: number
   'BSD-2-Clause': string // boolean
   CSS: string // boolean
   'Contributors Count': number
@@ -35,4 +34,10 @@ export interface IProject {
   Language: string
   Keywords: string
   'Stars Count': number
+}
+
+export interface IProjectPredicted extends IProject {
+  predicted_stars: number
+  knn_names: string[]
+  knn_distances: number[]
 }
