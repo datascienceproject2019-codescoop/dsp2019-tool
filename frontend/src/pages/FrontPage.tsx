@@ -9,12 +9,16 @@ import { Input } from '../elements/Input'
 
 import { Stores } from '../stores'
 import { ProjectStore } from '../stores/ProjectStore'
+import { IProject } from 'src/types/project'
 
 interface IProps {
   projecStore?: ProjectStore
 }
 interface IState {
+  loading: boolean
+  error: string
   searchText: string
+  shownResults: boolean[]
 }
 
 @inject((stores: Stores) => ({
@@ -23,13 +27,39 @@ interface IState {
 @observer
 export class FrontPage extends React.Component<IProps, IState> {
   state = {
-    searchText: ''
+    loading: true,
+    error: '',
+    searchText: '',
+    shownResults: []
   }
-  componentDidMount() {
-    this.props.projecStore!.getProjects()
+  async componentDidMount() {
+    const result = await this.props.projecStore!.getProjects()
+    if (result) {
+      this.setState({
+        loading: false,
+        shownResults: Array(result.length).fill(true)
+      })
+    } else {
+      this.setState({
+        loading: false,
+        error: 'Getting the projects from the API failed. Whops.'
+      })
+    }
+  }
+  projectIncludesString(p: IProject, s: string) {
+    const name = p['Name with Owner'].toLowerCase()
+    const str = s.toLowerCase()
+    return name.includes(str)
+  }
+  handleSearch = (input: string) => {
+    this.setState({
+      searchText: input,
+      shownResults: this.props.projecStore!.projects.map(p => this.projectIncludesString(p, input))
+    })
   }
   render() {
     const { projects } = this.props.projecStore!
+    const { shownResults } = this.state
     return (
       <Container>
         <header>
@@ -42,12 +72,14 @@ export class FrontPage extends React.Component<IProps, IState> {
           <label>Search</label>
           <Input placeHolder="Github project name" icon={<MdSearch size={24}/>} iconPadding="38px" fullWidth
               value={this.state.searchText || ''}
-              onChange={val => this.setState({ searchText: val })}/>
+              onChange={this.handleSearch}/>
         </SearchBox>
         <h2>Featured projects</h2>
         <FeaturedList >
           { projects.map((p, i) =>
-          <li key={i}><Link to={`projects/${p['Name with Owner']}`}>{p['Name with Owner']}</Link></li>
+          <li key={i} className={shownResults[i] ? '' : 'hidden'}>
+            <Link to={`projects/${p['Name with Owner']}`}>{p['Name with Owner']}</Link>
+          </li>
           )}
         </FeaturedList >
       </Container>
@@ -63,6 +95,10 @@ const SearchBox = styled.div`
   width: 300px;
 `
 const FeaturedList = styled.ul`
+  .hidden {
+    visibility: hidden;
+    display: none;
+  }
   & > li {
     margin: 5px;
   }
