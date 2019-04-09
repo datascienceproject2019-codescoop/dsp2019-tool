@@ -1,7 +1,8 @@
-POST http://localhost:9001/api/projects/predict
+# POST http://localhost:9001/api/projects/predict
+POST https://teekoivi.users.cs.helsinki.fi/api/projects/predict
 Accept: application/json
 Content-Type: application/json
 
 {
-    "nameWithOwner":"Cotya/composer-test-framework"
+    "nameWithOwner":"phil-lavin/Trustico-PHP"
 }

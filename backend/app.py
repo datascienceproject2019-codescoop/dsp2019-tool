@@ -1,6 +1,10 @@
+import os
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+import pandas as pd
 from services import star_predict as stars
+from services import ols_stars_local
 from services import knn
 from services import gh_api
 
@@ -51,49 +55,43 @@ def get_predicted_project():
     
     name = body['nameWithOwner']
 
-    predicted_stars = []
-
-    repos = _get_gh_repo_by_name(name)
+    # If GITHUB_API_KEY environment variable is set we are using Github API
+    if os.environ.get('GITHUB_API_KEY') != None:
+        repos = _get_gh_repo_by_name(name)
+    else:
+        repos = gh_api.find_repos_by_name(name)
 
     if len(repos) == 0:
         return 'No project found with given name "{}"'.format(name), 404
     if len(repos) > 1:
         return 'Somehow you managed to find multiple projects with the same name "{}" and break me :('.format(name), 400
 
-    repo = repos[0]
+    # This is a DataFrame containing one row
+    repo_df = repos[0]
 
     try:
-        predicted_stars = stars.predict_gh_data(repo)
+        if os.environ.get('GITHUB_API_KEY') != None:
+            predicted_stars = stars.predict_gh_data(repo_df)
+        else:
+            predicted_stars = ols_stars_local.predict_stars(repo_df)
         computed_knn = knn.compute_knn(name)
 
-        repo['predicted_stars'] = predicted_stars
-        repo['knn_distances'] = computed_knn[0].tolist()
-        repo['knn_nearest'] = computed_knn[1].tolist()
+        # Fill NaN with None (which converts to null) since that will f up our JSON
+        # because DataFrame.to_dict can't do it for us
+        repo_df = repo_df.where((pd.notnull(repo_df)), None)
+        repo_dict = repo_df.to_dict(orient='records')[0]
 
-        return jsonify(repo)
+        repo_dict['predicted_stars'] = predicted_stars
+        repo_dict['knn_distances'] = computed_knn[0].tolist()
+        repo_dict['knn_names'] = computed_knn[1].tolist()
+
+        return jsonify(repo_dict)
     except OSError as e:
         print(e)
         if (e.errno == 2):
             return 'Pickle file containing the model not found', 500
         else:
             return 'Something went wrong ¯\\_(ツ)_/¯', 500
-
-
-@app.route('/api/stars/predict', methods=['POST'])
-def ols_predict():
-    json_dict = request.get_json()
-
-    try:
-        predicted_stars = stars.predict_stars(json_dict)
-
-        return jsonify({ 'prediction': predicted_stars })
-    except OSError as e:
-        print(e)
-        if (e.errno == 2):
-            return 'Pickle file containing the model not found', 500
-        else:
-            return 'Something went wrong ¯\\_(ツ)_/¯', 500
-
 
 if __name__ == "__main__":
     import os
