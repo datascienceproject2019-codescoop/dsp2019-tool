@@ -63,7 +63,9 @@ export class FrontPage extends React.Component<IProps, IState> {
     return (
       <Container>
         <header>
-          <h1>Data science project 2019: Codescoop</h1>
+          <h1><a href="https://github.com/datascienceproject2019-codescoop/dsp2019-tool" target="__blank">
+            Data science project 2019: Codescoop
+          </a></h1>
           <p>
             <i>Is a library good or not, we'll show you!</i>
           </p>

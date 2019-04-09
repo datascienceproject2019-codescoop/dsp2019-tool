@@ -25,7 +25,7 @@
     "eject": "react-scripts-ts eject",
     "lint": "tslint --project ./ -c tslint.json",
     "lint:fix": "tslint --fix --project ./ -c tslint.json",
-    "deploy": "rm -r ../static || true && npm run build && mv ./build/** ../"
+    "deploy": "./deploy.sh"
   },
   "devDependencies": {
     "@types/jest": "^24.0.9",
