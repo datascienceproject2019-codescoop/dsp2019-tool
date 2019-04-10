@@ -1,13 +1,19 @@
 import pandas as pd
 import requests
 import json
+import os
 from pandas.core.frame import DataFrame
 from typing import List, Dict
+from github import Github
+from github.Repository import Repository
+from github.ContentFile import ContentFile
 
 _test500 = None
 _api_address = 'https://api.github.com'
+_github = Github(os.environ.get('GITHUB_API_KEY'))
 
-def _get_test_data() -> DataFrame:
+
+def get_test_data() -> DataFrame:
     global _test500
 
     if (_test500 is None):
@@ -16,89 +22,111 @@ def _get_test_data() -> DataFrame:
     return _test500
 
 
+def _get_repo_langs(repo: Repository) -> Dict[str, int]:
+    langs = repo.get_languages()
 
-def _other_prog_lang(data) -> int:
-    has_major_langs = False
+    for k, v in langs.items():
+        langs[k] = 1
+
+    return langs
+
+
+def _get_pages_enabled(repo: Repository) -> int:
+    """
+    GET /repos/:owner/:repo/pages
+    """
+    address = _api_address + '/repos/' + repo.full_name + '/pages'
+    response = json.loads(requests.get(address).content)
+    
+    try:
+        if response['message'] == 'Not Found':
+            return 0
+    except:
+        print('Error occured')
+        return 0
+
+    return 1
+
+
+def _get_has_pulls(repo: Repository) -> int:
+    pulls = repo.get_pulls()
+
+    return 1 if (pulls.totalCount > 0) else 0
+
+
+def _has_only_minor_lang(langs: Dict[str, int]) -> int:
     important_prog_lang = [
         'Java', 'HTML', 'Scala', 'PHP', 'Python', 'JavaScript', 'CSS', 'Go', 
-        'Shell', 'Objective-C'
+        'Shell', 'Objective-C', 'Emacs Lisp'
         ]
 
-    keys = data.keys()
+    has_major = False
 
-    for lang in important_prog_lang:
-        if lang in keys:
-            has_major_langs = True
+    for l in langs.keys():
+        if l in important_prog_lang:
+            has_major = True
 
-    if (has_major_langs):
+    return 0 if has_major else 1
+
+
+def _get_default_branch_index(repo: Repository) -> int:
+    branch_name = repo.default_branch
+    branches = repo.get_branches()
+
+    branch_i = 0
+
+    for i, b in enumerate(branches):
+        if b.name == branch_name:
+            branch_i = i
+            break
+
+    return branch_i
+
+
+def _get_license(repo):
+    from github.GithubException import UnknownObjectException
+    license = None
+
+    try:
+        license = repo.get_license()
+    except UnknownObjectException as e:
+        # print('No licenses on repo ' + repo.full_name)
+        pass
+
+    return license
+
+
+def _license_equals(license: ContentFile, license_key: str) -> int:
+    if license is None:
         return 0
-    else:
-        return 1
+
+    return license.license.key == license_key
 
 
-def _boolean_to_binary(data, column: str) -> int:
-    if (data[column]):
-        return 1
-    else:
-        return 0
-def get_projects() -> DataFrame:
-    return _get_test_data()
-
-
-def find_repos_by_name(name: str) -> List[DataFrame]:
-    t_data = _get_test_data()
-
-    found = t_data.loc[t_data['Name with Owner'] == name]
-
-    if (len(found) <= 1):
-        found = [found]
-
-    return found
-
-def find_repositories_by_fullname(name: str) -> List[Dict[str, str]]:
-    address = _api_address + '/search/repositories?q=' + name
-    response = requests.get(address).content
-    loaded = json.loads(response)
-
-    return loaded['items']
-
-
-def find_langs_by_fullname(name: str) -> Dict[str, str]:
-    address = _api_address + '/repos/' + name + '/languages'
-
-    response = requests.get(address).content
-
-    return json.loads(response)
-
-
-def count_items_by_link(address: str) -> int:
-    response = requests.get(address).content
-
-    json_list = json.loads(response)
-
-    return len(json_list)
-
-
-def get_open_issues_by_fullname(name: str):
+def find_repo_by_fullname_as_dict(f_name: str) -> Dict[str, int]:
     """
-    Returns dict as {'total_count': 0, 'incomplete_results': False, 'items': []}
+    Built on _featureList presented in star_predict.py-file.
     """
-    address = _api_address + '/search/issues?q=' + name + '+state:open'
-    response = requests.get(address).content
+    repo_as_dict = {}
 
-    return json.loads(response)
+    repo = _github.get_repo(f_name)
+    langs = _get_repo_langs(repo)
+    license = _get_license(repo)
 
+    repo_as_dict = {**repo_as_dict, **langs}
+    repo_as_dict['Pages enabled'] = _get_pages_enabled(repo)
+    repo_as_dict['Issues enabled'] = 1 if repo.has_issues else 0
+    repo_as_dict['Forks Count'] = repo.forks_count
+    repo_as_dict['Open Issues Count'] = repo.open_issues
+    repo_as_dict['Watchers Count'] = repo.watchers
+    repo_as_dict['BSD-2-Clause'] = _license_equals(license, 'bsd-2-clause')
+    repo_as_dict['Wiki enabled'] = 1 if repo.has_wiki else 0
+    repo_as_dict['MIT'] = _license_equals(license, 'mit')
+    repo_as_dict['Pull requests enabled'] = _get_has_pulls(repo)
+    repo_as_dict['Fork'] =  1 if (repo.fork) else 0
+    repo_as_dict['Size'] = repo.size
+    repo_as_dict['Contributors Count'] = repo.get_contributors().totalCount
+    repo_as_dict['Other'] = _has_only_minor_lang(langs)
+    repo_as_dict['Default branch'] = _get_default_branch_index(repo)
 
-def get_branch_index(branches_url: str, branch_name: str) -> int:
-    branch_url = branches_url.split('{')[0]
-
-    response = requests.get(branch_url).content
-    branches = json.loads(response)
-
-    branch_index = 0
-
-    for i, branch in enumerate(branches):
-        if branch['name'] == branch_name:
-            branch_index = i
-
-    return branch_index
+    return repo_as_dict
