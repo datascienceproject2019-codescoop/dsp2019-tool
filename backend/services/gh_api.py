@@ -147,5 +147,7 @@ def find_repo_by_fullname_as_dict(f_name: str) -> Dict[str, int]:
     repo_as_dict['Contributors Count'] = repo.get_contributors().totalCount
     repo_as_dict['Other'] = _has_only_minor_lang(langs)
     repo_as_dict['Default branch'] = _get_default_branch_index(repo)
+    repo_as_dict['Stars Count'] = repo.stargazers_count
+    repo_as_dict['Language'] = repo.language
 
     return repo_as_dict

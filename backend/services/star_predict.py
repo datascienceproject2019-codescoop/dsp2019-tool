@@ -21,7 +21,7 @@ def _get_proper_dict(data: Dict[str, str]) -> Dict[str, List[str]]:
         if k in data.keys():
             proper[k] = [data[k]]
         else:
-            # print('Key ' + k + ' was not in data. Setting default value 0')
+            print('Key ' + k + ' was not in data. Setting default value 0')
             proper[k] = [0]
 
     return proper
