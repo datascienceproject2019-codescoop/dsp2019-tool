@@ -38,16 +38,16 @@ def get_predicted_project():
     
     name = body['nameWithOwner']
 
+    repo_dict = {}
+
     try:
         # K-nn
         computed_knn = knn.compute_knn(name)
 
         # Star-prediction
-        if os.environ.get('GITHUB_API_KEY') is None:
-            predicted_stars = _predict_mock_data()
-        else:
-            repo_dict = gh_api.find_repo_by_fullname_as_dict(name)
-            predicted_stars = stars.predict_dict(repo_dict) 
+        repo_dict = gh_api.find_repo_by_fullname_as_dict(name)
+        # predicted_stars = _predict_mock_data()
+        predicted_stars = stars.predict_dict(repo_dict) 
 
         repo_dict['predicted_stars'] = predicted_stars
         repo_dict['knn_distances'] = computed_knn[0].tolist()

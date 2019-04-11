@@ -10,7 +10,25 @@ from github.ContentFile import ContentFile
 
 _test500 = None
 _api_address = 'https://api.github.com'
-_github = Github(os.environ.get('GITHUB_API_KEY'))
+_github = None
+
+def _get_github() -> Github:
+    import os
+    from github.GithubException import BadCredentialsException
+
+    global _github
+
+    if _github is None:
+        try:
+            _github = Github(os.environ.get('GITHUB_API_KEY'))
+            # Just to test validity of credentials
+            _github.get_repo('ArktinenSieni/discotetris')
+        except BadCredentialsException as e:
+            print(e)
+            print('Invalid Github-credentials: initializing without API-key')
+            _github = Github()
+
+    return _github
 
 
 def get_test_data() -> DataFrame:
@@ -108,8 +126,9 @@ def find_repo_by_fullname_as_dict(f_name: str) -> Dict[str, int]:
     Built on _featureList presented in star_predict.py-file.
     """
     repo_as_dict = {}
+    gh = _get_github()
 
-    repo = _github.get_repo(f_name)
+    repo = gh.get_repo(f_name)
     langs = _get_repo_langs(repo)
     license = _get_license(repo)
 
