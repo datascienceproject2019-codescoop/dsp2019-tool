@@ -9,6 +9,7 @@ from services import star_predict as stars
 from services import ols_stars_local
 from services import knn
 from services import gh_api
+from services import plots
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"*": {"origins": "*"}})
@@ -29,7 +30,10 @@ def _predict_mock_data():
 @app.route('/api/projects', methods=['GET'])
 def get_projects():
     projects = gh_api.get_test_data()
-    return projects.to_json(orient='records')
+
+    sns_path = plots.create_sns_plot(projects)
+    
+    return projects.to_json(orient='./' + f_name + '.png''records')
 
 
 @app.route('/api/projects/predict', methods=['POST'])
