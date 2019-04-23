@@ -10,6 +10,7 @@ def create_image_folder():
     if not os.path.exists(images_folder):
         os.makedirs(images_folder)
 
+
 def create_sns_plot(frame: DataFrame) -> str:
     """
     Returns path from where the plot is accessable
