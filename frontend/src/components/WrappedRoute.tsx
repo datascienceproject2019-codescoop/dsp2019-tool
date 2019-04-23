@@ -29,7 +29,6 @@ export const WrappedRoute = ({ component, ...rest } : IWrappedRoute) =>
   <Route {...rest} render={renderWrapper(component)}/>
 
 const MainWrapper = styled.div`
-  font-family: 'Raleway', sans-serif;
 `
 const MainContainer = styled.main`
   margin: 40px auto 20px auto;

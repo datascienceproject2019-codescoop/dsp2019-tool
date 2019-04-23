@@ -9,7 +9,7 @@ interface IProps {
   iconPadding?: string
   fullWidth?: boolean
   disabled?: boolean
-  placeHolder?: string
+  placeholder?: string
   required?: boolean
   onChange: (value: any) => void // Basically one of: string | number | file
 }
