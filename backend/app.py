@@ -3,7 +3,7 @@ import pandas as pd
 import sys
 import traceback
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 from services import star_predict as stars
 from services import ols_stars_local
@@ -30,10 +30,8 @@ def _predict_mock_data():
 @app.route('/api/projects', methods=['GET'])
 def get_projects():
     projects = gh_api.get_test_data()
-
-    sns_path = plots.create_sns_plot(projects)
     
-    return projects.to_json(orient='./' + f_name + '.png''records')
+    return projects.to_json(orient='records')
 
 
 @app.route('/api/projects/predict', methods=['POST'])
@@ -70,6 +68,16 @@ def get_predicted_project():
         print(e)
         print(traceback.format_exc())
         return 'Something went wrong ¯\\_(ツ)_/¯', 500
+
+
+@app.route('/api/sns_image', methods=['GET'])
+def get_sns_plot_image():
+    projects = gh_api.get_test_data()
+
+    sns_path = plots.create_sns_plot(projects)
+
+    return send_file(sns_path)
+
 
 if __name__ == "__main__":
     import os
