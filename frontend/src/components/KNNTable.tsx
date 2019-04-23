@@ -21,7 +21,7 @@ class KNNTableClass extends React.PureComponent<IProps> {
         </thead>
         <tbody>
           { combined.map(c =>
-          <tr>
+          <tr key={c.name}>
             <td><a href={`https://github.com/${c.name}`} target="__blank">{c.name}</a></td>
             <td>{c.distance}</td>
           </tr>
