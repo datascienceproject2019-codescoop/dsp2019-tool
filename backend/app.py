@@ -37,12 +37,12 @@ def get_projects():
 
 
 def _get_scores(repo_list):
-    REPO_DATA = 'resources/repositories_rating.csv'
-    score_column = 'December 22, 2018'
-    scores = pd.read_csv(REPO_DATA)['December 22, 2018']
+    #REPO_DATA = 'resources/repositories-rating.csv'
+    #score_column = 'December 22, 2018'
+    #scores = pd.read_csv(REPO_DATA)
 
-    for repo in repo_list:
-        print(repo)
+    #for repo in repo_list:
+        #print(scores['Name with Owner' == repo])
 
     return repo_list
 
@@ -61,7 +61,7 @@ def get_predicted_project():
         # K-nn
         computed_knn = knn.compute_knn(name)
 
-        computed_knn = _get_scores(computed_knn)
+        computed_knn = _get_scores(computed_knn[1])
 
         # Star-prediction
         repo_dict = gh_api.find_repo_by_fullname_as_dict(name)
