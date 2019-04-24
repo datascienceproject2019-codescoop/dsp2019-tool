@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import sys
 import traceback
+import base64
 
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
@@ -75,6 +76,7 @@ def get_sns_plot_image():
     projects = gh_api.get_test_data()
 
     sns_path = plots.create_sns_plot(projects)
+    image_binary = read_image(sns_path)
 
     return send_file(sns_path)
 
