@@ -36,6 +36,17 @@ def get_projects():
     return projects.to_json(orient='records')
 
 
+def _get_scores(repo_list):
+    REPO_DATA = 'resources/repositories_rating.csv'
+    score_column = 'December 22, 2018'
+    scores = pd.read_csv(REPO_DATA)['December 22, 2018']
+
+    for repo in repo_list:
+        print(repo)
+
+    return repo_list
+
+
 @app.route('/api/projects/predict', methods=['POST'])
 def get_predicted_project():
     body = request.get_json()
@@ -49,6 +60,8 @@ def get_predicted_project():
     try:
         # K-nn
         computed_knn = knn.compute_knn(name)
+
+        computed_knn = _get_scores(computed_knn)
 
         # Star-prediction
         repo_dict = gh_api.find_repo_by_fullname_as_dict(name)
