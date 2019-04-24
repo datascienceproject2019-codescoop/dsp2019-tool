@@ -11,6 +11,8 @@ LOWER_BOUND           = 1.791759469228055
 UPPER_BOUND           = 42.40071186221785
 TIMESTAMP_LOWER_BOUND = "2012-12-12 17:51:25"
 
+images_folder = "resources/images"
+csv_folder    = "resources/repositories-timeseries.csv"
 
 '''
 Create some plots that contains chronological data for a repository:
@@ -605,3 +607,115 @@ def get_commits_timestamps(github_client, repository_name, max_commit_number = 2
             # or for 409: 'Git Repository is empty'
             except:
                 return None, None, None
+
+
+'''
+Functions required for plotting and for fetching the data
+'''
+
+def create_image_folder():
+    '''
+    Create / Check if a folder to store the images exists in resources
+    '''
+
+    if not os.path.exists(images_folder):
+        os.makedirs(images_folder)
+
+
+def get_dataframe_and_github_client():
+    '''
+    SUBJECT TO CHANGE
+    To be invoked, like all the functions that are to follow from the main script
+
+    Returns: the dataframe containing historical data from libraries io
+             and a github client
+    '''
+
+    data = pd.read_csv(csv_folder, sep = ',', index_col = False)
+    github_client = Github(os.environ.get('GITHUB_API_KEY'))
+
+    return data, github_client
+
+
+def create_stars_timeseries_plot(dataframe, github_client, repository_name):
+    '''
+    Create the stars timeseries plot for the a given repository and return its path
+    '''
+
+    create_image_folder()
+
+    timeseries = get_stars_count_timeseries(dataframe, github_client, repository_name)
+
+
+def create_forks_timeseries_plot(dataframe, github_client, repository_name):
+    '''
+    Create the forks timeseries plot for the a given repository and return its path
+    '''
+
+    create_image_folder()
+
+    timeseries = get_forks_count_timeseries(dataframe, github_client, repository_name)
+
+
+def create_watchers_timeseries_plot(dataframe, github_client, repository_name):
+    '''
+    Create the watchers timeseries plot for the a given repository and return its path
+    '''
+
+    create_image_folder()
+
+    timeseries = get_watchers_count_timeseries(dataframe, github_client, repository_name)
+
+
+def create_contributors_timeseries_plot(dataframe, github_client, repository_name):
+    '''
+    Create the contributors timeseries plot for the a given repository and return its path
+    '''
+
+    create_image_folder()
+
+    timeseries = get_contributors_count_timeseries(dataframe, github_client, repository_name)
+
+
+def create_contributors_timeseries_plot(dataframe, github_client, repository_name):
+    '''
+    Create the contributors timeseries plot for the a given repository and return its path
+    '''
+
+    create_image_folder()
+
+    timeseries = get_contributors_count_timeseries(dataframe, github_client, repository_name)
+
+
+def create_rating_timeseries_plot(dataframe, github_client, repository_name):
+    '''
+    Create the rating timeseries plot for the a given repository and return its path
+    '''
+
+    create_image_folder()
+
+    timeseries = get_rating_timeseries(dataframe, github_client, repository_name)
+
+
+def create_commits_timeseries_plot(github_client, repository_name):
+    '''
+    Create the commits timeseries plot (for some of its commits)
+        for the a given repository and return its path
+    '''
+
+    create_image_folder()
+
+    timestamps, lower, higher = get_commits_timestamps(github_client, repository_name, max_commit_number = 200)
+
+
+def create_issues_timeseries_plot(github_client, repository_name):
+    '''
+    Create the issues timeseries plot (for some of its issues - both open and closed; so two plots)
+        for the a given repository and return the two paths (path 1: one issues; path 2: closed issues)
+    '''
+
+    create_image_folder()
+
+        open_issues, lower_open, \
+            higher_open, _, closed_issues, \
+            lower_closed, higher_closed, _ = get_issues_timestamps(github_client, repository_name, max_open_issues = 200, max_closed_issues = 200)
