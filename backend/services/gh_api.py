@@ -125,6 +125,10 @@ def find_repo_by_fullname_as_dict(f_name: str) -> Dict[str, int]:
     """
     Built on _featureList presented in star_predict.py-file.
     """
+
+    if os.environ.get('GITHUB_API_KEY') == None:
+        return get_test_data()
+
     repo_as_dict = {}
     gh = _get_github()
 
