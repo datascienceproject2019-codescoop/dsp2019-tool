@@ -108,8 +108,6 @@ def get_star_issue_image():
     response = make_response(send_file(byte_io, mimetype='image/png'))
     response.headers['Content-Transfer-Encoding']='base64'
 
-    image_binary = read_image(sns_path)
-
     return response
 
 
