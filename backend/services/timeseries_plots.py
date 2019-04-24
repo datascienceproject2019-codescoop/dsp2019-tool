@@ -914,7 +914,7 @@ def create_commits_timeseries_plot(github_client, repository_name):
         plt.grid()
         plt.xlabel("Date")
         plt.ylabel("Number of Commits")
-        plt.title("Stargazers for {}".format(repository_name))
+        plt.title("Commits for {}".format(repository_name))
         plt.plot(timestamps, range(lower, higher + 1), linewidth = 5)
         fig.savefig(path)
 
@@ -925,7 +925,7 @@ def create_commits_timeseries_plot(github_client, repository_name):
         plt.grid()
         plt.xlabel("Date")
         plt.ylabel("Number of Commits")
-        plt.title("Stargazers for {}".format(repository_name))
+        plt.title("Commits for {}".format(repository_name))
         plt.scatter(timestamps, range(lower, higher + 1), linewidth = 5)
         fig.savefig(path)
 
@@ -945,7 +945,38 @@ def create_open_issues_timeseries_plot(github_client, repository_name):
     path = images_folder + "/open_issues_timeseries.png"
 
     if lower_open is not None:
-        pass
+
+        if len(open_issues) > 1:
+
+            fig = plt.figure(figsize = (20, 10))
+            ax  = fig.add_subplot(1, 1, 1)
+            plt.grid()
+            plt.xlabel("Date")
+            plt.ylabel("Number of Open Issues")
+            plt.title("Open Issues for {}".format(repository_name))
+            plt.plot(open_issues, range(lower_open, higher_open + 1), linewidth = 5)
+            fig.savefig(path)
+
+        else:
+
+            fig = plt.figure(figsize = (20, 10))
+            ax  = fig.add_subplot(1, 1, 1)
+            plt.grid()
+            plt.xlabel("Date")
+            plt.ylabel("Number of Open Issues")
+            plt.title("Open Issues for {}".format(repository_name))
+            plt.scatter(open_issues, range(lower_open, higher_open + 1), linewidth = 5)
+            fig.savefig(path)
+
+    else:
+
+        fig = plt.figure(figsize = (20, 10))
+        ax  = fig.add_subplot(1, 1, 1)
+        plt.grid()
+        plt.xlabel("Date")
+        plt.ylabel("Number of Open Issues")
+        plt.title("Open Issues for {}".format(repository_name))
+        fig.savefig(path)
 
     return path
 
@@ -963,6 +994,37 @@ def create_closed_issues_timeseries_plot(github_client, repository_name):
     path = images_folder + "/closed_issues_timeseries.png"
 
     if lower_closed is not None:
-        pass
+
+        if len(closed_issues) > 1:
+
+            fig = plt.figure(figsize = (20, 10))
+            ax  = fig.add_subplot(1, 1, 1)
+            plt.grid()
+            plt.xlabel("Date")
+            plt.ylabel("Number of Closed Issues")
+            plt.title("Closed Issues for {}".format(repository_name))
+            plt.plot(closed_issues, range(lower_closed, higher_closed + 1), linewidth = 5)
+            fig.savefig(path)
+
+        else:
+
+            fig = plt.figure(figsize = (20, 10))
+            ax  = fig.add_subplot(1, 1, 1)
+            plt.grid()
+            plt.xlabel("Date")
+            plt.ylabel("Number of Closed Issues")
+            plt.title("Closed Issues for {}".format(repository_name))
+            plt.scatter(closed_issues, range(lower_closed, higher_closed + 1), linewidth = 5)
+            fig.savefig(path)
+
+    else:
+
+        fig = plt.figure(figsize = (20, 10))
+        ax  = fig.add_subplot(1, 1, 1)
+        plt.grid()
+        plt.xlabel("Date")
+        plt.ylabel("Number of Closed Issues")
+        plt.title("Closed Issues for {}".format(repository_name))
+        fig.savefig(path)
 
     return path
