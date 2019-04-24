@@ -2,9 +2,11 @@ import os
 import time
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 from datetime import datetime
 from github import Github
 from github import GithubException
+
 
 
 LOWER_BOUND           = 1.791759469228055
@@ -646,6 +648,41 @@ def create_stars_timeseries_plot(dataframe, github_client, repository_name):
 
     timeseries = get_stars_count_timeseries(dataframe, github_client, repository_name)
 
+    path = images_folder + "/stars_timeseries.png"
+
+    if len(timeseries) == 4:
+
+        labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018']
+
+        fig = plt.figure(figsize = (20, 10))
+        ax  = fig.add_subplot(1, 1, 1)
+        plt.grid()
+        plt.xlabel("Date")
+        plt.ylabel("Number of Stargazers")
+        plt.title("Stargazers for {}".format(repository_name))
+        plt.plot(range(1, 5), timeseries, linewidth = 5)
+        ax.set_xticks(range(1, 5))
+        ax.set_xticklabels(labels)
+        fig.savefig(path)
+
+        return path
+
+    # else the length of the timeseries should be 5
+    labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018', 'Now']
+
+    fig = plt.figure(figsize = (20, 10))
+    ax  = fig.add_subplot(1, 1, 1)
+    plt.grid()
+    plt.xlabel("Date")
+    plt.ylabel("Number of Stargazers")
+    plt.title("Stargazers for {}".format(repository_name))
+    plt.plot(range(1, 6), timeseries, linewidth = 5)
+    ax.set_xticks(range(1, 6))
+    ax.set_xticklabels(labels)
+    fig.savefig(path)
+
+    return path
+
 
 def create_forks_timeseries_plot(dataframe, github_client, repository_name):
     '''
@@ -655,6 +692,41 @@ def create_forks_timeseries_plot(dataframe, github_client, repository_name):
     create_image_folder()
 
     timeseries = get_forks_count_timeseries(dataframe, github_client, repository_name)
+
+    path = images_folder + "/forks_timeseries.png"
+
+    if len(timeseries) == 4:
+
+        labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018']
+
+        fig = plt.figure(figsize = (20, 10))
+        ax  = fig.add_subplot(1, 1, 1)
+        plt.grid()
+        plt.xlabel("Date")
+        plt.ylabel("Number of Forks")
+        plt.title("Forks for {}".format(repository_name))
+        plt.plot(range(1, 5), timeseries, linewidth = 5)
+        ax.set_xticks(range(1, 5))
+        ax.set_xticklabels(labels)
+        fig.savefig(path)
+
+        return path
+
+    # else the length of the timeseries should be 5
+    labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018', 'Now']
+
+    fig = plt.figure(figsize = (20, 10))
+    ax  = fig.add_subplot(1, 1, 1)
+    plt.grid()
+    plt.xlabel("Date")
+    plt.ylabel("Number of Forks")
+    plt.title("Forks for {}".format(repository_name))
+    plt.plot(range(1, 6), timeseries, linewidth = 5)
+    ax.set_xticks(range(1, 6))
+    ax.set_xticklabels(labels)
+    fig.savefig(path)
+
+    return path
 
 
 def create_watchers_timeseries_plot(dataframe, github_client, repository_name):
@@ -666,6 +738,41 @@ def create_watchers_timeseries_plot(dataframe, github_client, repository_name):
 
     timeseries = get_watchers_count_timeseries(dataframe, github_client, repository_name)
 
+    path = images_folder + "/watchers_timeseries.png"
+
+    if len(timeseries) == 4:
+
+        labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018']
+
+        fig = plt.figure(figsize = (20, 10))
+        ax  = fig.add_subplot(1, 1, 1)
+        plt.grid()
+        plt.xlabel("Date")
+        plt.ylabel("Number of Watchers")
+        plt.title("Watchers for {}".format(repository_name))
+        plt.plot(range(1, 5), timeseries, linewidth = 5)
+        ax.set_xticks(range(1, 5))
+        ax.set_xticklabels(labels)
+        fig.savefig(path)
+
+        return path
+
+    # else the length of the timeseries should be 5
+    labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018', 'Now']
+
+    fig = plt.figure(figsize = (20, 10))
+    ax  = fig.add_subplot(1, 1, 1)
+    plt.grid()
+    plt.xlabel("Date")
+    plt.ylabel("Number of Watchers")
+    plt.title("Watchers for {}".format(repository_name))
+    plt.plot(range(1, 6), timeseries, linewidth = 5)
+    ax.set_xticks(range(1, 6))
+    ax.set_xticklabels(labels)
+    fig.savefig(path)
+
+    return path
+
 
 def create_contributors_timeseries_plot(dataframe, github_client, repository_name):
     '''
@@ -676,15 +783,40 @@ def create_contributors_timeseries_plot(dataframe, github_client, repository_nam
 
     timeseries = get_contributors_count_timeseries(dataframe, github_client, repository_name)
 
+    path = images_folder + "/contributors_timeseries.png"
 
-def create_contributors_timeseries_plot(dataframe, github_client, repository_name):
-    '''
-    Create the contributors timeseries plot for the a given repository and return its path
-    '''
+    if len(timeseries) == 4:
 
-    create_image_folder()
+        labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018']
 
-    timeseries = get_contributors_count_timeseries(dataframe, github_client, repository_name)
+        fig = plt.figure(figsize = (20, 10))
+        ax  = fig.add_subplot(1, 1, 1)
+        plt.grid()
+        plt.xlabel("Date")
+        plt.ylabel("Number of Contributors")
+        plt.title("Contributors for {}".format(repository_name))
+        plt.plot(range(1, 5), timeseries, linewidth = 5)
+        ax.set_xticks(range(1, 5))
+        ax.set_xticklabels(labels)
+        fig.savefig(path)
+
+        return path
+
+    # else the length of the timeseries should be 5
+    labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018', 'Now']
+
+    fig = plt.figure(figsize = (20, 10))
+    ax  = fig.add_subplot(1, 1, 1)
+    plt.grid()
+    plt.xlabel("Date")
+    plt.ylabel("Number of Contributors")
+    plt.title("Contributors for {}".format(repository_name))
+    plt.plot(range(1, 6), timeseries, linewidth = 5)
+    ax.set_xticks(range(1, 6))
+    ax.set_xticklabels(labels)
+    fig.savefig(path)
+
+    return path
 
 
 def create_rating_timeseries_plot(dataframe, github_client, repository_name):
@@ -695,6 +827,41 @@ def create_rating_timeseries_plot(dataframe, github_client, repository_name):
     create_image_folder()
 
     timeseries = get_rating_timeseries(dataframe, github_client, repository_name)
+
+    path = images_folder + "/rating_timeseries.png"
+
+    if len(timeseries) == 4:
+
+        labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018']
+
+        fig = plt.figure(figsize = (20, 10))
+        ax  = fig.add_subplot(1, 1, 1)
+        plt.grid()
+        plt.xlabel("Date")
+        plt.ylabel("Number of Rating")
+        plt.title("Rating for {}".format(repository_name))
+        plt.plot(range(1, 5), timeseries, linewidth = 5)
+        ax.set_xticks(range(1, 5))
+        ax.set_xticklabels(labels)
+        fig.savefig(path)
+
+        return path
+
+    # else the length of the timeseries should be 5
+    labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018', 'Now']
+
+    fig = plt.figure(figsize = (20, 10))
+    ax  = fig.add_subplot(1, 1, 1)
+    plt.grid()
+    plt.xlabel("Date")
+    plt.ylabel("Number of Rating")
+    plt.title("Rating for {}".format(repository_name))
+    plt.plot(range(1, 6), timeseries, linewidth = 5)
+    ax.set_xticks(range(1, 6))
+    ax.set_xticklabels(labels)
+    fig.savefig(path)
+
+    return path
 
 
 def create_commits_timeseries_plot(github_client, repository_name):
