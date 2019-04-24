@@ -378,7 +378,7 @@ def get_rating_timeseries(dataframe, github_client, repository_name):
     return timeseries
 
 
-def get_issues_timestamps(github_client, repository_name, max_open_issues = 200, max_closed_issues = 200):
+def get_open_issues_timestamps(github_client, repository_name, max_open_issues = 200):
     '''
     Returns:
         - open issue create timestamps for the specified repository
@@ -386,15 +386,8 @@ def get_issues_timestamps(github_client, repository_name, max_open_issues = 200,
         - total number of open issues for that repository(higher bound of number of open issues to be plotted)
         - average daily number of open issues
 
-        - closed issue closed timestamps for the specified repository
-        - lower bound of number of closed issues to be plotted
-        - total number of closed issues for the repository
-        - average daily number of closed issues
-
     max_open_issues: maximum number of entries that shall be returned(if the repository has fewer
                      open issues than all the available ones will be returned)
-    max_closed_issues: maximum number of entries that shall be returned(if the repository has fewer
-                       closed issues than all the available ones will be returned)
     '''
 
     try:
@@ -402,9 +395,6 @@ def get_issues_timestamps(github_client, repository_name, max_open_issues = 200,
 
         open_issues           = repo.get_issues(state = 'open')
         number_of_open_issues = open_issues.totalCount
-
-        closed_issues           = repo.get_issues(state = 'closed')
-        number_of_closed_issues = closed_issues.totalCount
 
         # get the open issues timestamps (creation time)
         counter_open = 0
@@ -430,31 +420,7 @@ def get_issues_timestamps(github_client, repository_name, max_open_issues = 200,
         except:
             average_open = len(open_issues_timestamps)
 
-        # get the closed issues timestamps (closure time)
-        counter_closed = 0
-        closed_issues_timestamps = []
-
-        for issue in closed_issues:
-            closed_issues_timestamps.append(issue.created_at)
-            counter_closed += 1
-
-            if counter_closed == max_closed_issues:
-                break
-
-        # the closed issues are given from newer to older so we invert them to make chronological plotting more facile
-        closed_issues_timestamps = closed_issues_timestamps[::-1]
-        closed_issues_timestamps = np.array(closed_issues_timestamps)
-        closed_issues_timestamps.sort()
-
-        lower_closed = number_of_closed_issues - len(closed_issues_timestamps) + 1
-
-        # get the average number of closed issues per day
-        try:
-            average_closed = len(closed_issues_timestamps) / ((closed_issues_timestamps[-1] - closed_issues_timestamps[0]).days)
-        except:
-            average_closed = len(closed_issues_timestamps)
-
-        return open_issues_timestamps, lower_open, number_of_open_issues, average_open, closed_issues_timestamps, lower_closed, number_of_closed_issues, average_closed
+        return open_issues_timestamps, lower_open, number_of_open_issues, average_open
 
     except GithubException as error:
 
@@ -470,9 +436,6 @@ def get_issues_timestamps(github_client, repository_name, max_open_issues = 200,
 
                 open_issues           = repo.get_issues(state = 'open')
                 number_of_open_issues = open_issues.totalCount
-
-                closed_issues           = repo.get_issues(state = 'closed')
-                number_of_closed_issues = closed_issues.totalCount
 
                 # get the open issues timestamps (creation time)
                 counter_open = 0
@@ -498,6 +461,74 @@ def get_issues_timestamps(github_client, repository_name, max_open_issues = 200,
                 except:
                     average_open = len(open_issues_timestamps)
 
+                return open_issues_timestamps, lower_open, number_of_open_issues, average_open
+
+
+            # for when the api server didn't recover, or for when a socket timeout occurs
+            # or for 409: 'Git Repository is empty'
+            except:
+                return None, None, None, None
+
+
+def get_closed_issues_timestamps(github_client, repository_name, max_closed_issues = 200):
+    '''
+    Returns:
+        - closed issue closed timestamps for the specified repository
+        - lower bound of number of closed issues to be plotted
+        - total number of closed issues for the repository
+        - average daily number of closed issues
+
+    max_closed_issues: maximum number of entries that shall be returned(if the repository has fewer
+                       closed issues than all the available ones will be returned)
+    '''
+
+    try:
+        repo = github_client.get_repo(repository_name)
+
+        closed_issues           = repo.get_issues(state = 'closed')
+        number_of_closed_issues = closed_issues.totalCount
+
+        # get the closed issues timestamps (closure time)
+        counter_closed = 0
+        closed_issues_timestamps = []
+
+        for issue in closed_issues:
+            closed_issues_timestamps.append(issue.created_at)
+            counter_closed += 1
+
+            if counter_closed == max_closed_issues:
+                break
+
+        # the closed issues are given from newer to older so we invert them to make chronological plotting more facile
+        closed_issues_timestamps = closed_issues_timestamps[::-1]
+        closed_issues_timestamps = np.array(closed_issues_timestamps)
+        closed_issues_timestamps.sort()
+
+        lower_closed = number_of_closed_issues - len(closed_issues_timestamps) + 1
+
+        # get the average number of closed issues per day
+        try:
+            average_closed = len(closed_issues_timestamps) / ((closed_issues_timestamps[-1] - closed_issues_timestamps[0]).days)
+        except:
+            average_closed = len(closed_issues_timestamps)
+
+        return closed_issues_timestamps, lower_closed, number_of_closed_issues, average_closed
+
+    except GithubException as error:
+
+        if error.status == 404:
+            return None, None, None, None
+
+        # most likely a 502
+        else:
+            time.sleep(1)
+
+            try:
+                repo = github_client.get_repo(repository_name)
+
+                closed_issues           = repo.get_issues(state = 'closed')
+                number_of_closed_issues = closed_issues.totalCount
+
                 # get the closed issues timestamps (closure time)
                 counter_closed = 0
                 closed_issues_timestamps = []
@@ -522,13 +553,13 @@ def get_issues_timestamps(github_client, repository_name, max_open_issues = 200,
                 except:
                     average_closed = len(closed_issues_timestamps)
 
-                return open_issues_timestamps, lower_open, number_of_open_issues, average_open, closed_issues_timestamps, lower_closed, number_of_closed_issues, average_closed
+                return closed_issues_timestamps, lower_closed, number_of_closed_issues, average_closed
 
 
             # for when the api server didn't recover, or for when a socket timeout occurs
             # or for 409: 'Git Repository is empty'
             except:
-                return None, None, None, None, None, None, None, None
+                return None, None, None, None
 
 
 def get_commits_timestamps(github_client, repository_name, max_commit_number = 200):
@@ -874,15 +905,43 @@ def create_commits_timeseries_plot(github_client, repository_name):
 
     timestamps, lower, higher = get_commits_timestamps(github_client, repository_name, max_commit_number = 200)
 
+    path = images_folder + "/commits_timeseries.png"
 
-def create_issues_timeseries_plot(github_client, repository_name):
+
+    return path
+
+
+def create_open_issues_timeseries_plot(github_client, repository_name):
     '''
-    Create the issues timeseries plot (for some of its issues - both open and closed; so two plots)
-        for the a given repository and return the two paths (path 1: one issues; path 2: closed issues)
+    Create the open issues timeseries plot (for some of its open issues)
+        for the a given repository and return its path
     '''
 
     create_image_folder()
 
-        open_issues, lower_open, \
-            higher_open, _, closed_issues, \
-            lower_closed, higher_closed, _ = get_issues_timestamps(github_client, repository_name, max_open_issues = 200, max_closed_issues = 200)
+    open_issues, lower_open, higher_open, _ = get_open_issues_timestamps(github_client, repository_name, max_open_issues = 200)
+
+    path = images_folder + "/open_issues_timeseries.png"
+
+    if lower_open is not None:
+        pass
+
+    return path
+
+
+def create_closed_issues_timeseries_plot(github_client, repository_name):
+    '''
+    Create the closed issues timeseries plot (for some of its closed issues)
+        for the a given repository and return its path
+    '''
+
+    create_image_folder()
+
+    closed_issues, lower_closed, higher_closed, _ = get_closed_issues_timestamps(github_client, repository_name, max_closed_issues = 200)
+
+    path = images_folder + "/closed_issues_timeseries.png"
+
+    if lower_closed is not None:
+        pass
+
+    return path
