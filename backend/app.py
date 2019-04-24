@@ -1,5 +1,7 @@
 import os
 import pandas as pd
+import sys
+import traceback
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -56,12 +58,14 @@ def get_predicted_project():
         return jsonify(repo_dict)
     except OSError as e:
         print(e)
+        print(traceback.format_exc())
         if (e.errno == 2):
             return 'Pickle file containing the model not found', 500
         else:
             return 'Something went wrong ¯\\_(ツ)_/¯', 500
     except Exception as e:
         print(e)
+        print(traceback.format_exc())
         return 'Something went wrong ¯\\_(ツ)_/¯', 500
 
 if __name__ == "__main__":
