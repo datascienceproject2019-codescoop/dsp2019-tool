@@ -128,7 +128,6 @@ def find_repo_by_fullname_as_dict(f_name: str) -> Dict[str, int]:
 
     if os.environ.get('GITHUB_API_KEY') == None:
         test_df = get_test_data()
-        print(test_df.to_dict())
         return test_df.to_dict(orient='records')[0]
 
     repo_as_dict = {}
