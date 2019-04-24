@@ -3,8 +3,9 @@ import pandas as pd
 import sys
 import traceback
 import base64
+import io
 
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify, send_file, make_response
 from flask_cors import CORS
 from services import star_predict as stars
 from services import ols_stars_local
@@ -76,9 +77,17 @@ def get_sns_plot_image():
     projects = gh_api.get_test_data()
 
     sns_path = plots.create_sns_plot(projects)
-    image_binary = read_image(sns_path)
+    byte_io = io.BytesIO()
 
-    return send_file(sns_path)
+    with open(sns_path, 'rb') as image:
+        byte_io.write(image.read())
+        byte_io.seek(0)
+
+    response = make_response(send_file(byte_io, mimetype='image/png'))
+    response.headers['Content-Transfer-Encoding']='base64'
+
+    #return send_file(sns_path)
+    return response
 
 
 if __name__ == "__main__":

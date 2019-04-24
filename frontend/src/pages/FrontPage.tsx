@@ -95,6 +95,11 @@ export class FrontPage extends React.Component<IProps, IState> {
           </p>
         </Description>
         <Divider />
+
+        <SnsPlot>
+        <img src="http://localhost:9001/api/sns_image"></img>
+        </SnsPlot>
+
         <DatasetsContainer>
           <Dataset>
             <h3>Libraries.io data of 2018-03-12 (500 000 projects) <a href="https://libraries.io/data">source</a></h3>
@@ -178,4 +183,8 @@ const FeaturedList = styled.ul`
   & > li {
     margin: 5px;
   }
+`
+
+const SnsPlot = styled.div`
+  display: flex
 `
