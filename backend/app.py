@@ -5,11 +5,7 @@ import traceback
 import base64
 import io
 
-<<<<<<< HEAD
 from flask import Flask, request, jsonify, send_file, make_response
-=======
-from flask import Flask, request, jsonify, send_file
->>>>>>> API serves sns-image
 from flask_cors import CORS
 from services import star_predict as stars
 from services import ols_stars_local
@@ -38,7 +34,6 @@ def get_projects():
     projects = gh_api.get_test_data()
     
     return projects.to_json(orient='records')
-<<<<<<< HEAD
 
 
 def _get_scores(repo_list):
@@ -50,8 +45,6 @@ def _get_scores(repo_list):
         print(repo)
 
     return repo_list
-=======
->>>>>>> API serves sns-image
 
 
 @app.route('/api/projects/predict', methods=['POST'])
@@ -114,6 +107,8 @@ def get_star_issue_image():
 
     response = make_response(send_file(byte_io, mimetype='image/png'))
     response.headers['Content-Transfer-Encoding']='base64'
+
+    image_binary = read_image(sns_path)
 
     return response
 
