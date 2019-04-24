@@ -72,21 +72,29 @@ def get_predicted_project():
         return 'Something went wrong ¯\\_(ツ)_/¯', 500
 
 
-@app.route('/api/sns_image', methods=['GET'])
+@app.route('/api/images/sns_image', methods=['GET'])
 def get_sns_plot_image():
-    projects = gh_api.get_test_data()
+    projects = pd.read_pickle('resources/seaborn_dataframe1.pkl')
 
     sns_path = plots.create_sns_plot(projects)
-    byte_io = io.BytesIO()
-
-    with open(sns_path, 'rb') as image:
-        byte_io.write(image.read())
-        byte_io.seek(0)
+    byte_io = plots.image_to_bytes(sns_path)
 
     response = make_response(send_file(byte_io, mimetype='image/png'))
     response.headers['Content-Transfer-Encoding']='base64'
 
-    #return send_file(sns_path)
+    return response
+
+
+@app.route('/api/images/star_issue_image', methods=['GET'])
+def get_star_issue_image():
+    data = pd.read_pickle('resources/issues_data.pkl')
+
+    plot_path = plots.create_issues_stars_plot(data)
+    byte_io = plots.image_to_bytes(plot_path)
+
+    response = make_response(send_file(byte_io, mimetype='image/png'))
+    response.headers['Content-Transfer-Encoding']='base64'
+
     return response
 
 

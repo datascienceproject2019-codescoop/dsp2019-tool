@@ -97,7 +97,8 @@ export class FrontPage extends React.Component<IProps, IState> {
         <Divider />
 
         <SnsPlot>
-        <img src="http://localhost:9001/api/sns_image"></img>
+          <img src={`${process.env.REACT_APP_API_URL}/images/sns_image`}></img>
+          <img src={`${process.env.REACT_APP_API_URL}/images/star_issue_image`}></img>
         </SnsPlot>
 
         <DatasetsContainer>
