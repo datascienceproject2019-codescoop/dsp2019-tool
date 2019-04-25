@@ -49,7 +49,7 @@ def get_predicted_project():
         # Star-prediction
         repo_dict = gh_api.find_repo_by_fullname_as_dict(name)
         # predicted_stars = _predict_mock_data()
-        predicted_stars = stars.predict_dict(repo_dict) 
+        predicted_stars = stars.predict_dict(name) 
 
         repo_dict['predicted_stars'] = ols_stars_local.predict_stars(repo_dict)
         repo_dict['old_predicted_stars'] = stars.predict_dict(repo_dict) 
