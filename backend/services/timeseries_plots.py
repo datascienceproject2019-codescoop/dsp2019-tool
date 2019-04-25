@@ -907,16 +907,29 @@ def create_commits_timeseries_plot(github_client, repository_name):
 
     path = images_folder + "/commits_timeseries.png"
 
-    if len(timestamps) > 1:
+    if lower is not None:
 
-        fig = plt.figure(figsize = (20, 10))
-        ax  = fig.add_subplot(1, 1, 1)
-        plt.grid()
-        plt.xlabel("Date")
-        plt.ylabel("Number of Commits")
-        plt.title("Commits for {}".format(repository_name))
-        plt.plot(timestamps, range(lower, higher + 1), linewidth = 5)
-        fig.savefig(path)
+        if len(timestamps) > 1:
+
+            fig = plt.figure(figsize = (20, 10))
+            ax  = fig.add_subplot(1, 1, 1)
+            plt.grid()
+            plt.xlabel("Date")
+            plt.ylabel("Number of Commits")
+            plt.title("Commits for {}".format(repository_name))
+            plt.plot(timestamps, range(lower, higher + 1), linewidth = 5)
+            fig.savefig(path)
+
+        else:
+
+            fig = plt.figure(figsize = (20, 10))
+            ax  = fig.add_subplot(1, 1, 1)
+            plt.grid()
+            plt.xlabel("Date")
+            plt.ylabel("Number of Commits")
+            plt.title("Commits for {}".format(repository_name))
+            plt.scatter(timestamps, range(lower, higher + 1), linewidth = 5)
+            fig.savefig(path)
 
     else:
 
@@ -926,7 +939,6 @@ def create_commits_timeseries_plot(github_client, repository_name):
         plt.xlabel("Date")
         plt.ylabel("Number of Commits")
         plt.title("Commits for {}".format(repository_name))
-        plt.scatter(timestamps, range(lower, higher + 1), linewidth = 5)
         fig.savefig(path)
 
     return path
