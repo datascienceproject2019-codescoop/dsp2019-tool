@@ -4,6 +4,7 @@ import sys
 import traceback
 import base64
 import io
+import threading
 
 from flask import Flask, request, jsonify, send_file, make_response
 from flask_cors import CORS
@@ -64,12 +65,8 @@ def get_predicted_project():
 
         #computed_knn = _get_scores(computed_knn)
 
-        try:
-            timeseries.generate_functions(name)
-        except Exception as e:
-            print(type(e))
-            print(e)
-
+        threading.Thread(target=timeseries.generate_functions, args=[name]).start()
+        
         # Star-prediction
         repo_dict = gh_api.find_repo_by_fullname_as_dict(name)
 
@@ -80,14 +77,12 @@ def get_predicted_project():
 
         return jsonify(repo_dict)
     except OSError as e:
-        print(e)
         print(traceback.format_exc())
         if (e.errno == 2):
             return 'Pickle file containing the model not found', 500
         else:
             return 'Something went wrong ¯\\_(ツ)_/¯', 500
     except Exception as e:
-        print(e)
         print(traceback.format_exc())
         return 'Something went wrong ¯\\_(ツ)_/¯', 500
 

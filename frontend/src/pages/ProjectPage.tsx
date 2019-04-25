@@ -12,7 +12,7 @@ import {
 // import {
 //   ScatterChart,
 // } from '../components/Charts'
-import { KNNTable } from '../components/KNNTable'
+// import { KNNTable } from '../components/KNNTable'
 
 import { Stores } from '../stores'
 import { ProjectStore } from '../stores/ProjectStore'
@@ -102,7 +102,9 @@ export class ProjectPage extends React.Component<IProps, IState> {
           </PredictedContainer>
           <ChartContainer>
             <h2>Similar projects</h2>
+            {/*
             <KNNTable names={p!.knn_names} distances={p!.knn_distances}/>
+            */}
           </ChartContainer>
         </Wrapper>
       </Container>

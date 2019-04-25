@@ -674,6 +674,10 @@ def get_dataframe_and_github_client():
     return data, github_client
 
 
+def _reformat_gh_name(name):
+    return name.replace('/', '_')
+
+
 def create_stars_timeseries_plot(dataframe, github_client, repository_name):
     '''
     Create the stars timeseries plot for the a given repository and return its path
@@ -681,7 +685,7 @@ def create_stars_timeseries_plot(dataframe, github_client, repository_name):
 
     create_image_folder()
 
-    path = images_folder + '/' + repository_name + "_stars_timeseries.png"
+    path = images_folder + '/' + _reformat_gh_name(repository_name) + "_stars_timeseries.png"
 
     if not os.path.isfile(path):
         timeseries = get_stars_count_timeseries(dataframe, github_client, repository_name)
@@ -725,7 +729,7 @@ def create_forks_timeseries_plot(dataframe, github_client, repository_name):
     Create the forks timeseries plot for the a given repository and return its path
     '''
     create_image_folder()
-    path = images_folder + "/" + repository_name + "_forks_timeseries.png"
+    path = images_folder + "/" + _reformat_gh_name(repository_name) + "_forks_timeseries.png"
 
     if not os.path.isfile(path):
         timeseries = get_forks_count_timeseries(dataframe, github_client, repository_name)
@@ -770,7 +774,7 @@ def create_watchers_timeseries_plot(dataframe, github_client, repository_name):
     '''
 
     create_image_folder()
-    path = images_folder + "/" + repository_name + "_watchers_timeseries.png"
+    path = images_folder + "/" + _reformat_gh_name(repository_name) + "_watchers_timeseries.png"
 
     if not os.path.isfile(path):
         timeseries = get_watchers_count_timeseries(dataframe, github_client, repository_name)
@@ -815,7 +819,7 @@ def create_contributors_timeseries_plot(dataframe, github_client, repository_nam
     '''
 
     create_image_folder()
-    path = images_folder + "/" + repository_name + "_contributors_timeseries.png"
+    path = images_folder + "/" + _reformat_gh_name(repository_name) + "_contributors_timeseries.png"
 
     if not os.path.isfile(path):
         timeseries = get_contributors_count_timeseries(dataframe, github_client, repository_name)
@@ -860,7 +864,7 @@ def create_rating_timeseries_plot(dataframe, github_client, repository_name):
 
     create_image_folder()
 
-    path = images_folder + "/" + repository_name + "_rating_timeseries.png"
+    path = images_folder + "/" + _reformat_gh_name(repository_name) + "_rating_timeseries.png"
 
     if not os.path.isfile(path):
         timeseries = get_rating_timeseries(dataframe, github_client, repository_name)
@@ -907,7 +911,7 @@ def create_commits_timeseries_plot(github_client, repository_name):
 
     create_image_folder()
 
-    path = images_folder + "/" + repository_name + "_commits_timeseries.png"
+    path = images_folder + "/" + _reformat_gh_name(repository_name) + "_commits_timeseries.png"
 
     if not os.path.isfile(path):
         timestamps, lower, higher = get_commits_timestamps(github_client, repository_name, max_commit_number = 200)
@@ -956,7 +960,7 @@ def create_open_issues_timeseries_plot(github_client, repository_name):
     '''
 
     create_image_folder()
-    path = images_folder + "/" + repository_name + "_open_issues_timeseries.png"
+    path = images_folder + "/" + _reformat_gh_name(repository_name) + "_open_issues_timeseries.png"
 
     if not os.path.isfile(path):
         open_issues, lower_open, higher_open, _ = get_open_issues_timestamps(github_client, repository_name, max_open_issues = 200)
@@ -1005,7 +1009,7 @@ def create_closed_issues_timeseries_plot(github_client, repository_name):
     '''
 
     create_image_folder()
-    path = images_folder + "/" + repository_name + "_closed_issues_timeseries.png"
+    path = images_folder + "/" + _reformat_gh_name(repository_name) + "_closed_issues_timeseries.png"
 
     if not os.path.isfile(path):
         closed_issues, lower_closed, higher_closed, _ = get_closed_issues_timestamps(github_client, repository_name, max_closed_issues = 200)
@@ -1050,6 +1054,8 @@ def generate_functions(repository_name):
     import traceback
     df, gh = get_dataframe_and_github_client()
 
+    print("Generating plots for", repository_name)
+
     try:
         create_closed_issues_timeseries_plot(gh, repository_name)
     except Exception as e:
@@ -1089,3 +1095,5 @@ def generate_functions(repository_name):
         create_watchers_timeseries_plot(df, gh, repository_name)
     except Exception as e:
         print("watchers", traceback.print_exc())
+
+    print("Plots generated for", repository_name)

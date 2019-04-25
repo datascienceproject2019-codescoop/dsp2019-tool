@@ -21,7 +21,7 @@ def create_sns_plot(frame: DataFrame) -> str:
     if not os.path.isfile(full_path):
         print('Generating new SNS plot png')
         plt = sns.pairplot(frame)
-        plt.fig.sub.suptitle("Features Comparison", y = 1.00, fontsize=18)
+        plt.fig.suptitle("Features Comparison", y = 1.00, fontsize=18)
         plt.savefig(full_path)
 
     return full_path
