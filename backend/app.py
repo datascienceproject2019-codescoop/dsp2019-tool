@@ -12,6 +12,7 @@ from services import ols_stars_local
 from services import knn
 from services import gh_api
 from services import plots
+from services import timeseries_plots as timeseries
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"*": {"origins": "*"}})
@@ -61,7 +62,13 @@ def get_predicted_project():
         # K-nn
         computed_knn = knn.compute_knn(name)
 
-        computed_knn = _get_scores(computed_knn[1])
+        #computed_knn = _get_scores(computed_knn)
+
+        try:
+            timeseries.generate_functions(name)
+        except Exception as e:
+            print(type(e))
+            print(e)
 
         # Star-prediction
         repo_dict = gh_api.find_repo_by_fullname_as_dict(name)
@@ -84,16 +91,21 @@ def get_predicted_project():
         print(traceback.format_exc())
         return 'Something went wrong ¯\\_(ツ)_/¯', 500
 
+def _get_image_response(image_path):
+    byte_io = plots.image_to_bytes(image_path)
+
+    response = make_response(send_file(byte_io, mimetype='image/png'))
+    response.headers['Content-Transfer-Encoding']='base64'
+
+    return response
 
 @app.route('/api/images/sns_image', methods=['GET'])
 def get_sns_plot_image():
     projects = pd.read_pickle('resources/seaborn_dataframe1.pkl')
 
     sns_path = plots.create_sns_plot(projects)
-    byte_io = plots.image_to_bytes(sns_path)
 
-    response = make_response(send_file(byte_io, mimetype='image/png'))
-    response.headers['Content-Transfer-Encoding']='base64'
+    response = _get_image_response(sns_path)
 
     return response
 
@@ -103,12 +115,76 @@ def get_star_issue_image():
     data = pd.read_pickle('resources/issues_data.pkl')
 
     plot_path = plots.create_issues_stars_plot(data)
-    byte_io = plots.image_to_bytes(plot_path)
 
-    response = make_response(send_file(byte_io, mimetype='image/png'))
-    response.headers['Content-Transfer-Encoding']='base64'
+    response = _get_image_response(plot_path)
 
     return response
+
+
+@app.route('/api/images/timeseries/stars', methods=['GET'])
+def get_time_series_stars():
+    csv_folder = "resources/repositories-timeseries.csv"
+    
+    # Search-word extraction
+    name = request.args.get('repo', '')
+
+    data = pd.read_csv(csv_folder, sep = ',', index_col = False)
+    gh = gh_api.get_github()
+
+    plot_path = timeseries.create_stars_timeseries_plot(data, gh, name)
+    
+    response = _get_image_response(plot_path)
+
+    return response
+
+
+@app.route('/api/images/timeseries/forks', methods=['GET'])
+def get_timeseries_forks():
+    csv_folder = "resources/repositories-timeseries.csv"
+
+    # Search-word extraction
+    name = request.args.get('repo', '')
+
+    data = pd.read_csv(csv_folder, sep = ',', index_col = False)
+    gh = gh_api.get_github()
+
+    plot_path = timeseries.create_forks_timeseries_plot(data, gh, name)
+    
+    response = _get_image_response(plot_path)
+
+    return response
+
+
+@app.route('/api/images/timeseries/watchers', methods=['GET'])
+def get_timeseries_watchers():
+    csv_folder = "resources/repositories-timeseries.csv"
+
+    # Search-word extraction
+    name = request.args.get('repo', '')
+
+    data = pd.read_csv(csv_folder, sep = ',', index_col = False)
+    gh = gh_api.get_github()
+
+    plot_path = timeseries.get_watchers_count_timeseries(data, gh, name)
+    
+    response = _get_image_response(plot_path)
+
+    return response
+
+
+@app.route('/api/images/timeseries/contributors', methods=['GET'])
+def get_timeseries_contributors():
+    csv_folder = "resources/repositories-timeseries.csv"
+
+    # Search-word extraction
+    name = request.args.get('repo', '')
+
+    data = pd.read_csv(csv_folder, sep = ',', index_col = False)
+    gh = gh_api.get_github()
+
+    result = timeseries.get_contributors_count_timeseries(data, gh, name)
+
+    return result
 
 
 if __name__ == "__main__":

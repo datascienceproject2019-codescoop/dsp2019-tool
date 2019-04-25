@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 from github import Github
 from github import GithubException
+from services import gh_api
 
 
 
@@ -15,6 +16,7 @@ TIMESTAMP_LOWER_BOUND = "2012-12-12 17:51:25"
 
 images_folder = "resources/images"
 csv_folder    = "resources/repositories-timeseries.csv"
+data = None
 
 '''
 Create some plots that contains chronological data for a repository:
@@ -646,11 +648,10 @@ def get_commits_timestamps(github_client, repository_name, max_commit_number = 2
 Functions required for plotting and for fetching the data
 '''
 
-def create_image_folder():
+def create_image_folder(name = ""):
     '''
     Create / Check if a folder to store the images exists in resources
     '''
-
     if not os.path.exists(images_folder):
         os.makedirs(images_folder)
 
@@ -663,9 +664,12 @@ def get_dataframe_and_github_client():
     Returns: the dataframe containing historical data from libraries io
              and a github client
     '''
+    global data
 
-    data = pd.read_csv(csv_folder, sep = ',', index_col = False)
-    github_client = Github(os.environ.get('GITHUB_API_KEY'))
+    if data is None:
+        data = pd.read_csv(csv_folder, sep = ',', index_col = False)
+
+    github_client = gh_api.get_github()
 
     return data, github_client
 
@@ -677,40 +681,41 @@ def create_stars_timeseries_plot(dataframe, github_client, repository_name):
 
     create_image_folder()
 
-    timeseries = get_stars_count_timeseries(dataframe, github_client, repository_name)
+    path = images_folder + '/' + repository_name + "_stars_timeseries.png"
 
-    path = images_folder + "/stars_timeseries.png"
+    if not os.path.isfile(path):
+        timeseries = get_stars_count_timeseries(dataframe, github_client, repository_name)
 
-    if len(timeseries) == 4:
+        if len(timeseries) == 4:
 
-        labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018']
+            labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018']
 
-        fig = plt.figure(figsize = (20, 10))
-        ax  = fig.add_subplot(1, 1, 1)
-        plt.grid()
-        plt.xlabel("Date")
-        plt.ylabel("Number of Stargazers")
-        plt.title("Stargazers for {}".format(repository_name))
-        plt.plot(range(1, 5), timeseries, linewidth = 5)
-        ax.set_xticks(range(1, 5))
-        ax.set_xticklabels(labels)
-        fig.savefig(path)
+            fig = plt.figure(figsize = (20, 10))
+            ax  = fig.add_subplot(1, 1, 1)
+            plt.grid()
+            plt.xlabel("Date")
+            plt.ylabel("Number of Stargazers")
+            plt.title("Stargazers for {}".format(repository_name))
+            plt.plot(range(1, 5), timeseries, linewidth = 5)
+            ax.set_xticks(range(1, 5))
+            ax.set_xticklabels(labels)
+            fig.savefig(path)
 
-    else:
+        else:
 
-        # else the length of the timeseries should be 5
-        labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018', 'Now']
+            # else the length of the timeseries should be 5
+            labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018', 'Now']
 
-        fig = plt.figure(figsize = (20, 10))
-        ax  = fig.add_subplot(1, 1, 1)
-        plt.grid()
-        plt.xlabel("Date")
-        plt.ylabel("Number of Stargazers")
-        plt.title("Stargazers for {}".format(repository_name))
-        plt.plot(range(1, 6), timeseries, linewidth = 5)
-        ax.set_xticks(range(1, 6))
-        ax.set_xticklabels(labels)
-        fig.savefig(path)
+            fig = plt.figure(figsize = (20, 10))
+            ax  = fig.add_subplot(1, 1, 1)
+            plt.grid()
+            plt.xlabel("Date")
+            plt.ylabel("Number of Stargazers")
+            plt.title("Stargazers for {}".format(repository_name))
+            plt.plot(range(1, 6), timeseries, linewidth = 5)
+            ax.set_xticks(range(1, 6))
+            ax.set_xticklabels(labels)
+            fig.savefig(path)
 
     return path
 
@@ -719,43 +724,42 @@ def create_forks_timeseries_plot(dataframe, github_client, repository_name):
     '''
     Create the forks timeseries plot for the a given repository and return its path
     '''
-
     create_image_folder()
+    path = images_folder + "/" + repository_name + "_forks_timeseries.png"
 
-    timeseries = get_forks_count_timeseries(dataframe, github_client, repository_name)
+    if not os.path.isfile(path):
+        timeseries = get_forks_count_timeseries(dataframe, github_client, repository_name)
 
-    path = images_folder + "/forks_timeseries.png"
+        if len(timeseries) == 4:
 
-    if len(timeseries) == 4:
+            labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018']
 
-        labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018']
+            fig = plt.figure(figsize = (20, 10))
+            ax  = fig.add_subplot(1, 1, 1)
+            plt.grid()
+            plt.xlabel("Date")
+            plt.ylabel("Number of Forks")
+            plt.title("Forks for {}".format(repository_name))
+            plt.plot(range(1, 5), timeseries, linewidth = 5)
+            ax.set_xticks(range(1, 5))
+            ax.set_xticklabels(labels)
+            fig.savefig(path)
 
-        fig = plt.figure(figsize = (20, 10))
-        ax  = fig.add_subplot(1, 1, 1)
-        plt.grid()
-        plt.xlabel("Date")
-        plt.ylabel("Number of Forks")
-        plt.title("Forks for {}".format(repository_name))
-        plt.plot(range(1, 5), timeseries, linewidth = 5)
-        ax.set_xticks(range(1, 5))
-        ax.set_xticklabels(labels)
-        fig.savefig(path)
+        else:
 
-    else:
+            # else the length of the timeseries should be 5
+            labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018', 'Now']
 
-        # else the length of the timeseries should be 5
-        labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018', 'Now']
-
-        fig = plt.figure(figsize = (20, 10))
-        ax  = fig.add_subplot(1, 1, 1)
-        plt.grid()
-        plt.xlabel("Date")
-        plt.ylabel("Number of Forks")
-        plt.title("Forks for {}".format(repository_name))
-        plt.plot(range(1, 6), timeseries, linewidth = 5)
-        ax.set_xticks(range(1, 6))
-        ax.set_xticklabels(labels)
-        fig.savefig(path)
+            fig = plt.figure(figsize = (20, 10))
+            ax  = fig.add_subplot(1, 1, 1)
+            plt.grid()
+            plt.xlabel("Date")
+            plt.ylabel("Number of Forks")
+            plt.title("Forks for {}".format(repository_name))
+            plt.plot(range(1, 6), timeseries, linewidth = 5)
+            ax.set_xticks(range(1, 6))
+            ax.set_xticklabels(labels)
+            fig.savefig(path)
 
     return path
 
@@ -766,41 +770,41 @@ def create_watchers_timeseries_plot(dataframe, github_client, repository_name):
     '''
 
     create_image_folder()
+    path = images_folder + "/" + repository_name + "_watchers_timeseries.png"
 
-    timeseries = get_watchers_count_timeseries(dataframe, github_client, repository_name)
+    if not os.path.isfile(path):
+        timeseries = get_watchers_count_timeseries(dataframe, github_client, repository_name)
 
-    path = images_folder + "/watchers_timeseries.png"
+        if len(timeseries) == 4:
 
-    if len(timeseries) == 4:
+            labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018']
 
-        labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018']
+            fig = plt.figure(figsize = (20, 10))
+            ax  = fig.add_subplot(1, 1, 1)
+            plt.grid()
+            plt.xlabel("Date")
+            plt.ylabel("Number of Watchers")
+            plt.title("Watchers for {}".format(repository_name))
+            plt.plot(range(1, 5), timeseries, linewidth = 5)
+            ax.set_xticks(range(1, 5))
+            ax.set_xticklabels(labels)
+            fig.savefig(path)
 
-        fig = plt.figure(figsize = (20, 10))
-        ax  = fig.add_subplot(1, 1, 1)
-        plt.grid()
-        plt.xlabel("Date")
-        plt.ylabel("Number of Watchers")
-        plt.title("Watchers for {}".format(repository_name))
-        plt.plot(range(1, 5), timeseries, linewidth = 5)
-        ax.set_xticks(range(1, 5))
-        ax.set_xticklabels(labels)
-        fig.savefig(path)
+        else:
 
-    else:
+            # else the length of the timeseries should be 5
+            labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018', 'Now']
 
-        # else the length of the timeseries should be 5
-        labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018', 'Now']
-
-        fig = plt.figure(figsize = (20, 10))
-        ax  = fig.add_subplot(1, 1, 1)
-        plt.grid()
-        plt.xlabel("Date")
-        plt.ylabel("Number of Watchers")
-        plt.title("Watchers for {}".format(repository_name))
-        plt.plot(range(1, 6), timeseries, linewidth = 5)
-        ax.set_xticks(range(1, 6))
-        ax.set_xticklabels(labels)
-        fig.savefig(path)
+            fig = plt.figure(figsize = (20, 10))
+            ax  = fig.add_subplot(1, 1, 1)
+            plt.grid()
+            plt.xlabel("Date")
+            plt.ylabel("Number of Watchers")
+            plt.title("Watchers for {}".format(repository_name))
+            plt.plot(range(1, 6), timeseries, linewidth = 5)
+            ax.set_xticks(range(1, 6))
+            ax.set_xticklabels(labels)
+            fig.savefig(path)
 
     return path
 
@@ -811,41 +815,40 @@ def create_contributors_timeseries_plot(dataframe, github_client, repository_nam
     '''
 
     create_image_folder()
+    path = images_folder + "/" + repository_name + "_contributors_timeseries.png"
 
-    timeseries = get_contributors_count_timeseries(dataframe, github_client, repository_name)
+    if not os.path.isfile(path):
+        timeseries = get_contributors_count_timeseries(dataframe, github_client, repository_name)
 
-    path = images_folder + "/contributors_timeseries.png"
+        if len(timeseries) == 4:
 
-    if len(timeseries) == 4:
+            labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018']
 
-        labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018']
+            fig = plt.figure(figsize = (20, 10))
+            ax  = fig.add_subplot(1, 1, 1)
+            plt.grid()
+            plt.xlabel("Date")
+            plt.ylabel("Number of Contributors")
+            plt.title("Contributors for {}".format(repository_name))
+            plt.plot(range(1, 5), timeseries, linewidth = 5)
+            ax.set_xticks(range(1, 5))
+            ax.set_xticklabels(labels)
+            fig.savefig(path)
 
-        fig = plt.figure(figsize = (20, 10))
-        ax  = fig.add_subplot(1, 1, 1)
-        plt.grid()
-        plt.xlabel("Date")
-        plt.ylabel("Number of Contributors")
-        plt.title("Contributors for {}".format(repository_name))
-        plt.plot(range(1, 5), timeseries, linewidth = 5)
-        ax.set_xticks(range(1, 5))
-        ax.set_xticklabels(labels)
-        fig.savefig(path)
+        else:
+            # else the length of the timeseries should be 5
+            labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018', 'Now']
 
-    else:
-
-        # else the length of the timeseries should be 5
-        labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018', 'Now']
-
-        fig = plt.figure(figsize = (20, 10))
-        ax  = fig.add_subplot(1, 1, 1)
-        plt.grid()
-        plt.xlabel("Date")
-        plt.ylabel("Number of Contributors")
-        plt.title("Contributors for {}".format(repository_name))
-        plt.plot(range(1, 6), timeseries, linewidth = 5)
-        ax.set_xticks(range(1, 6))
-        ax.set_xticklabels(labels)
-        fig.savefig(path)
+            fig = plt.figure(figsize = (20, 10))
+            ax  = fig.add_subplot(1, 1, 1)
+            plt.grid()
+            plt.xlabel("Date")
+            plt.ylabel("Number of Contributors")
+            plt.title("Contributors for {}".format(repository_name))
+            plt.plot(range(1, 6), timeseries, linewidth = 5)
+            ax.set_xticks(range(1, 6))
+            ax.set_xticklabels(labels)
+            fig.savefig(path)
 
     return path
 
@@ -857,40 +860,41 @@ def create_rating_timeseries_plot(dataframe, github_client, repository_name):
 
     create_image_folder()
 
-    timeseries = get_rating_timeseries(dataframe, github_client, repository_name)
+    path = images_folder + "/" + repository_name + "_rating_timeseries.png"
 
-    path = images_folder + "/rating_timeseries.png"
+    if not os.path.isfile(path):
+        timeseries = get_rating_timeseries(dataframe, github_client, repository_name)
 
-    if len(timeseries) == 4:
+        if len(timeseries) == 4:
 
-        labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018']
+            labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018']
 
-        fig = plt.figure(figsize = (20, 10))
-        ax  = fig.add_subplot(1, 1, 1)
-        plt.grid()
-        plt.xlabel("Date")
-        plt.ylabel("Number of Rating")
-        plt.title("Rating for {}".format(repository_name))
-        plt.plot(range(1, 5), timeseries, linewidth = 5)
-        ax.set_xticks(range(1, 5))
-        ax.set_xticklabels(labels)
-        fig.savefig(path)
+            fig = plt.figure(figsize = (20, 10))
+            ax  = fig.add_subplot(1, 1, 1)
+            plt.grid()
+            plt.xlabel("Date")
+            plt.ylabel("Number of Rating")
+            plt.title("Rating for {}".format(repository_name))
+            plt.plot(range(1, 5), timeseries, linewidth = 5)
+            ax.set_xticks(range(1, 5))
+            ax.set_xticklabels(labels)
+            fig.savefig(path)
 
-    else:
+        else:
 
-        # else the length of the timeseries should be 5
-        labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018', 'Now']
+            # else the length of the timeseries should be 5
+            labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018', 'Now']
 
-        fig = plt.figure(figsize = (20, 10))
-        ax  = fig.add_subplot(1, 1, 1)
-        plt.grid()
-        plt.xlabel("Date")
-        plt.ylabel("Number of Rating")
-        plt.title("Rating for {}".format(repository_name))
-        plt.plot(range(1, 6), timeseries, linewidth = 5)
-        ax.set_xticks(range(1, 6))
-        ax.set_xticklabels(labels)
-        fig.savefig(path)
+            fig = plt.figure(figsize = (20, 10))
+            ax  = fig.add_subplot(1, 1, 1)
+            plt.grid()
+            plt.xlabel("Date")
+            plt.ylabel("Number of Rating")
+            plt.title("Rating for {}".format(repository_name))
+            plt.plot(range(1, 6), timeseries, linewidth = 5)
+            ax.set_xticks(range(1, 6))
+            ax.set_xticklabels(labels)
+            fig.savefig(path)
 
     return path
 
@@ -903,22 +907,34 @@ def create_commits_timeseries_plot(github_client, repository_name):
 
     create_image_folder()
 
-    timestamps, lower, higher = get_commits_timestamps(github_client, repository_name, max_commit_number = 200)
+    path = images_folder + "/" + repository_name + "_commits_timeseries.png"
 
-    path = images_folder + "/commits_timeseries.png"
+    if not os.path.isfile(path):
+        timestamps, lower, higher = get_commits_timestamps(github_client, repository_name, max_commit_number = 200)
 
-    if lower is not None:
+        if lower is not None:
 
-        if len(timestamps) > 1:
+            if len(timestamps) > 1:
 
-            fig = plt.figure(figsize = (20, 10))
-            ax  = fig.add_subplot(1, 1, 1)
-            plt.grid()
-            plt.xlabel("Date")
-            plt.ylabel("Number of Commits")
-            plt.title("Commits for {}".format(repository_name))
-            plt.plot(timestamps, range(lower, higher + 1), linewidth = 5)
-            fig.savefig(path)
+                fig = plt.figure(figsize = (20, 10))
+                ax  = fig.add_subplot(1, 1, 1)
+                plt.grid()
+                plt.xlabel("Date")
+                plt.ylabel("Number of Commits")
+                plt.title("Commits for {}".format(repository_name))
+                plt.plot(timestamps, range(lower, higher + 1), linewidth = 5)
+                fig.savefig(path)
+
+            else:
+
+                fig = plt.figure(figsize = (20, 10))
+                ax  = fig.add_subplot(1, 1, 1)
+                plt.grid()
+                plt.xlabel("Date")
+                plt.ylabel("Number of Commits")
+                plt.title("Commits for {}".format(repository_name))
+                plt.scatter(timestamps, range(lower, higher + 1), linewidth = 5)
+                fig.savefig(path)
 
         else:
 
@@ -928,18 +944,7 @@ def create_commits_timeseries_plot(github_client, repository_name):
             plt.xlabel("Date")
             plt.ylabel("Number of Commits")
             plt.title("Commits for {}".format(repository_name))
-            plt.scatter(timestamps, range(lower, higher + 1), linewidth = 5)
             fig.savefig(path)
-
-    else:
-
-        fig = plt.figure(figsize = (20, 10))
-        ax  = fig.add_subplot(1, 1, 1)
-        plt.grid()
-        plt.xlabel("Date")
-        plt.ylabel("Number of Commits")
-        plt.title("Commits for {}".format(repository_name))
-        fig.savefig(path)
 
     return path
 
@@ -951,23 +956,34 @@ def create_open_issues_timeseries_plot(github_client, repository_name):
     '''
 
     create_image_folder()
+    path = images_folder + "/" + repository_name + "_open_issues_timeseries.png"
 
-    open_issues, lower_open, higher_open, _ = get_open_issues_timestamps(github_client, repository_name, max_open_issues = 200)
+    if not os.path.isfile(path):
+        open_issues, lower_open, higher_open, _ = get_open_issues_timestamps(github_client, repository_name, max_open_issues = 200)
 
-    path = images_folder + "/open_issues_timeseries.png"
+        if lower_open is not None:
 
-    if lower_open is not None:
+            if len(open_issues) > 1:
 
-        if len(open_issues) > 1:
+                fig = plt.figure(figsize = (20, 10))
+                ax  = fig.add_subplot(1, 1, 1)
+                plt.grid()
+                plt.xlabel("Date")
+                plt.ylabel("Number of Open Issues")
+                plt.title("Open Issues for {}".format(repository_name))
+                plt.plot(open_issues, range(lower_open, higher_open + 1), linewidth = 5)
+                fig.savefig(path)
 
-            fig = plt.figure(figsize = (20, 10))
-            ax  = fig.add_subplot(1, 1, 1)
-            plt.grid()
-            plt.xlabel("Date")
-            plt.ylabel("Number of Open Issues")
-            plt.title("Open Issues for {}".format(repository_name))
-            plt.plot(open_issues, range(lower_open, higher_open + 1), linewidth = 5)
-            fig.savefig(path)
+            else:
+
+                fig = plt.figure(figsize = (20, 10))
+                ax  = fig.add_subplot(1, 1, 1)
+                plt.grid()
+                plt.xlabel("Date")
+                plt.ylabel("Number of Open Issues")
+                plt.title("Open Issues for {}".format(repository_name))
+                plt.scatter(open_issues, range(lower_open, higher_open + 1), linewidth = 5)
+                fig.savefig(path)
 
         else:
 
@@ -977,18 +993,7 @@ def create_open_issues_timeseries_plot(github_client, repository_name):
             plt.xlabel("Date")
             plt.ylabel("Number of Open Issues")
             plt.title("Open Issues for {}".format(repository_name))
-            plt.scatter(open_issues, range(lower_open, higher_open + 1), linewidth = 5)
             fig.savefig(path)
-
-    else:
-
-        fig = plt.figure(figsize = (20, 10))
-        ax  = fig.add_subplot(1, 1, 1)
-        plt.grid()
-        plt.xlabel("Date")
-        plt.ylabel("Number of Open Issues")
-        plt.title("Open Issues for {}".format(repository_name))
-        fig.savefig(path)
 
     return path
 
@@ -1000,23 +1005,34 @@ def create_closed_issues_timeseries_plot(github_client, repository_name):
     '''
 
     create_image_folder()
+    path = images_folder + "/" + repository_name + "_closed_issues_timeseries.png"
 
-    closed_issues, lower_closed, higher_closed, _ = get_closed_issues_timestamps(github_client, repository_name, max_closed_issues = 200)
+    if not os.path.isfile(path):
+        closed_issues, lower_closed, higher_closed, _ = get_closed_issues_timestamps(github_client, repository_name, max_closed_issues = 200)
 
-    path = images_folder + "/closed_issues_timeseries.png"
+        if lower_closed is not None:
 
-    if lower_closed is not None:
+            if len(closed_issues) > 1:
 
-        if len(closed_issues) > 1:
+                fig = plt.figure(figsize = (20, 10))
+                ax  = fig.add_subplot(1, 1, 1)
+                plt.grid()
+                plt.xlabel("Date")
+                plt.ylabel("Number of Closed Issues")
+                plt.title("Closed Issues for {}".format(repository_name))
+                plt.plot(closed_issues, range(lower_closed, higher_closed + 1), linewidth = 5)
+                fig.savefig(path)
 
-            fig = plt.figure(figsize = (20, 10))
-            ax  = fig.add_subplot(1, 1, 1)
-            plt.grid()
-            plt.xlabel("Date")
-            plt.ylabel("Number of Closed Issues")
-            plt.title("Closed Issues for {}".format(repository_name))
-            plt.plot(closed_issues, range(lower_closed, higher_closed + 1), linewidth = 5)
-            fig.savefig(path)
+            else:
+
+                fig = plt.figure(figsize = (20, 10))
+                ax  = fig.add_subplot(1, 1, 1)
+                plt.grid()
+                plt.xlabel("Date")
+                plt.ylabel("Number of Closed Issues")
+                plt.title("Closed Issues for {}".format(repository_name))
+                plt.scatter(closed_issues, range(lower_closed, higher_closed + 1), linewidth = 5)
+                fig.savefig(path)
 
         else:
 
@@ -1026,17 +1042,50 @@ def create_closed_issues_timeseries_plot(github_client, repository_name):
             plt.xlabel("Date")
             plt.ylabel("Number of Closed Issues")
             plt.title("Closed Issues for {}".format(repository_name))
-            plt.scatter(closed_issues, range(lower_closed, higher_closed + 1), linewidth = 5)
             fig.savefig(path)
 
-    else:
-
-        fig = plt.figure(figsize = (20, 10))
-        ax  = fig.add_subplot(1, 1, 1)
-        plt.grid()
-        plt.xlabel("Date")
-        plt.ylabel("Number of Closed Issues")
-        plt.title("Closed Issues for {}".format(repository_name))
-        fig.savefig(path)
-
     return path
+
+def generate_functions(repository_name):
+    import traceback
+    df, gh = get_dataframe_and_github_client()
+
+    try:
+        create_closed_issues_timeseries_plot(gh, repository_name)
+    except Exception as e:
+        print("issues", traceback.print_exc())
+    
+    try:
+        create_commits_timeseries_plot(gh, repository_name)
+    except Exception as e:
+        print("commits", traceback.print_exc())
+    
+    try:
+        create_contributors_timeseries_plot(df, gh, repository_name)
+    except Exception as e:
+        print("contributors", traceback.print_exc())
+    
+    try:
+        create_forks_timeseries_plot(df, gh, repository_name)
+    except Exception as e:
+        print("forks", e)
+    
+    try:
+        create_open_issues_timeseries_plot(gh, repository_name)
+    except Exception as e:
+        print("open issues", traceback.print_exc())
+    
+    try:
+        create_rating_timeseries_plot(df, gh, repository_name)
+    except Exception as e:
+        print("rating", traceback.print_exc())
+    
+    try:
+        create_stars_timeseries_plot(df, gh, repository_name)
+    except Exception as e:
+        print("stars", traceback.print_exc())
+    
+    try:
+        create_watchers_timeseries_plot(df, gh, repository_name)
+    except Exception as e:
+        print("watchers", traceback.print_exc())

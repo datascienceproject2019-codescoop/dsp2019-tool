@@ -5,7 +5,7 @@ import numpy as np
 KNN_MODEL_PATH = 'models/knn/knn.pickle'
 KNN_DATA_PATH = 'models/knn/knn_data.npy'
 KNN_LABELS_PATH = 'models/knn/knn_labels.csv'
-#REPO_DATA = 'resources/repositories_rating.csv'
+REPO_DATA = 'resources/repositories-rating.csv'
 
 _knn_model = pickle.load(open(KNN_MODEL_PATH, 'rb'))
 _knn_data = np.load(KNN_DATA_PATH)
