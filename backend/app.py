@@ -65,7 +65,8 @@ def get_predicted_project():
 
         #computed_knn = _get_scores(computed_knn)
 
-        threading.Thread(target=timeseries.generate_functions, args=[name]).start()
+        # One option is to preprocess all the available plots, but usually it takes too much time to be responsive
+        # threading.Thread(target=timeseries.generate_functions, args=[name]).start()
         
         # Star-prediction
         repo_dict = gh_api.find_repo_by_fullname_as_dict(name)
@@ -74,6 +75,7 @@ def get_predicted_project():
         repo_dict['old_predicted_stars'] = stars.predict_dict(repo_dict) 
         repo_dict['knn_distances'] = computed_knn[0].tolist()
         repo_dict['knn_names'] = computed_knn[1].tolist()
+        repo_dict['rating'] = timeseries._get_rating(gh_api.get_github(), name)
 
         return jsonify(repo_dict)
     except OSError as e:
