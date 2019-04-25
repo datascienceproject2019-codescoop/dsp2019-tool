@@ -118,13 +118,8 @@ def get_star_issue_image():
 
 @app.route('/api/images/timeseries/stars', methods=['GET'])
 def get_time_series_stars():
-    csv_folder = "resources/repositories-timeseries.csv"
-    
-    # Search-word extraction
-    name = request.args.get('repo', '')
-
-    data = pd.read_csv(csv_folder, sep = ',', index_col = False)
-    gh = gh_api.get_github()
+    name = request.args.get('repo')
+    data, gh = timeseries.get_dataframe_and_github_client()
 
     plot_path = timeseries.create_stars_timeseries_plot(data, gh, name)
     
@@ -135,13 +130,8 @@ def get_time_series_stars():
 
 @app.route('/api/images/timeseries/forks', methods=['GET'])
 def get_timeseries_forks():
-    csv_folder = "resources/repositories-timeseries.csv"
-
-    # Search-word extraction
-    name = request.args.get('repo', '')
-
-    data = pd.read_csv(csv_folder, sep = ',', index_col = False)
-    gh = gh_api.get_github()
+    name = request.args.get('repo')
+    data, gh = timeseries.get_dataframe_and_github_client()
 
     plot_path = timeseries.create_forks_timeseries_plot(data, gh, name)
     
@@ -150,36 +140,75 @@ def get_timeseries_forks():
     return response
 
 
-@app.route('/api/images/timeseries/watchers', methods=['GET'])
-def get_timeseries_watchers():
-    csv_folder = "resources/repositories-timeseries.csv"
+@app.route('/api/images/timeseries/closedissues', methods=['GET'])
+def get_timeseries_closedissues():
+    name = request.args.get('repo')
+    data, gh = timeseries.get_dataframe_and_github_client()
 
-    # Search-word extraction
-    name = request.args.get('repo', '')
+    plot_path = timeseries.create_closed_issues_timeseries_plot(gh, name)
 
-    data = pd.read_csv(csv_folder, sep = ',', index_col = False)
-    gh = gh_api.get_github()
-
-    plot_path = timeseries.get_watchers_count_timeseries(data, gh, name)
-    
     response = _get_image_response(plot_path)
 
     return response
 
 
+@app.route('/api/images/timeseries/commits', methods=['GET'])
+def get_timeseries_commits():
+    name = request.args.get('repo')
+    data, gh = timeseries.get_dataframe_and_github_client()
+
+    plot_path = timeseries.create_commits_timeseries_plot(gh, name)
+
+    response = _get_image_response(plot_path)
+
+    return response
+
 @app.route('/api/images/timeseries/contributors', methods=['GET'])
 def get_timeseries_contributors():
-    csv_folder = "resources/repositories-timeseries.csv"
+    name = request.args.get('repo')
+    data, gh = timeseries.get_dataframe_and_github_client()
 
-    # Search-word extraction
-    name = request.args.get('repo', '')
+    plot_path = timeseries.create_contributors_timeseries_plot(data, gh, name)
 
-    data = pd.read_csv(csv_folder, sep = ',', index_col = False)
-    gh = gh_api.get_github()
+    response = _get_image_response(plot_path)
 
-    result = timeseries.get_contributors_count_timeseries(data, gh, name)
+    return response
 
-    return result
+
+@app.route('/api/images/timeseries/issues', methods=['GET'])
+def get_timeseries_issues():
+    name = request.args.get('repo')
+    data, gh = timeseries.get_dataframe_and_github_client()
+
+    plot_path = timeseries.create_open_issues_timeseries_plot(gh, name)
+
+    response = _get_image_response(plot_path)
+
+    return response
+
+
+@app.route('/api/images/timeseries/rating', methods=['GET'])
+def get_timeseries_rating():
+    name = request.args.get('repo')
+    data, gh = timeseries.get_dataframe_and_github_client()
+
+    plot_path = timeseries.create_rating_timeseries_plot(data, gh, name)
+
+    response = _get_image_response(plot_path)
+
+    return response
+
+
+@app.route('/api/images/timeseries/watchers', methods=['GET'])
+def get_timeseries_watchers():
+    name = request.args.get('repo')
+    data, gh = timeseries.get_dataframe_and_github_client()
+
+    plot_path = timeseries.create_watchers_timeseries_plot(data, gh, name)
+
+    response = _get_image_response(plot_path)
+
+    return response
 
 
 if __name__ == "__main__":
