@@ -95,6 +95,12 @@ export class FrontPage extends React.Component<IProps, IState> {
           </p>
         </Description>
         <Divider />
+          <h3>Repository-statistics Summary</h3>
+          <SnsPlot>
+            {/** These both doesn't need to be used IMO */}
+            <img src={`${process.env.REACT_APP_API_URL}/images/sns_image`}></img>
+            <img src={`${process.env.REACT_APP_API_URL}/images/star_issue_image`}></img>
+          </SnsPlot>
         <DatasetsContainer>
           <Dataset>
             <h3>Libraries.io data of 2018-03-12 (500 000 projects) <a href="https://libraries.io/data">source</a></h3>
@@ -177,5 +183,13 @@ const FeaturedList = styled.ul`
   }
   & > li {
     margin: 5px;
+  }
+`
+
+const SnsPlot = styled.div`
+  display: flex;
+  & > img {
+    width: 50%;
+    height: auto;
   }
 `
