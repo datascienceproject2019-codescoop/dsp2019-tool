@@ -12,7 +12,7 @@ export const Button = styled.button`
   padding: 0.5rem 0.5rem;
   text-decoration: none;
   &:hover {
-    box-shadow: 2px 2px #039be569;
+    box-shadow: 3px 3px #039be569;
   }
-  transition: 0.1s all;
+  transition: 0.2s all;
 `
