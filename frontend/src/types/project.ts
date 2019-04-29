@@ -34,6 +34,7 @@ export interface IProject {
   Language: string
   Keywords: string
   'Stars Count': number
+  rating: number
 }
 
 export interface IProjectPredicted extends IProject {

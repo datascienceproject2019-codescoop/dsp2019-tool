@@ -97,8 +97,30 @@ export class ProjectPage extends React.Component<IProps, IState> {
             <p><i>{p!.Description}</i></p>
           </TopContainer>
           <PredictedContainer>
-            <h2>Predicted stars: </h2>
-            <b>{p!.predicted_stars}</b>
+            <PredictedHeader>
+              <h2>Project rating: </h2>
+              <b>{p!.rating}</b>
+            </PredictedHeader>
+            <p>
+              Project rating is a simple statistic to describe a Github project's overall popularity.
+              Calculated from a Github project's available information such as
+              stars, forks, contributors, last updated timestamp and are issues or wiki enabled. Using the Libraries.io's
+              SourceRank algorithm as its basis, it was created to be a more robust version of it without some of its
+              more obscure features. Also we try to normalize the values between 0 and 5, where the mean value of our
+              500 000 test set lies somewhere around 1.8. Very few projects get a value higher than 4, and only 2 gained
+              5 in that 500 000. For a hugely successful project the rating might go over 5 since it's not bound.
+            </p>
+          </PredictedContainer>
+          <PredictedContainer>
+            <PredictedHeader>
+              <h2>Predicted stars: </h2>
+              <b>{p!.predicted_stars}</b>
+            </PredictedHeader>
+            <p>
+              This is the predicted value of a project's star count using a simple linear regression. The features picked
+              for the regression are computed using a lasso which gives approximately 20 features of the Libraries.io dataset.
+              It's most accurate with more popular projects with higher star count than lower star count projects.
+            </p>
           </PredictedContainer>
           <ChartContainer>
             <h2>Similar projects</h2>
@@ -144,11 +166,18 @@ const TopContainer = styled.header`
   }
 `
 const PredictedContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  & > p {
+    margin: 0;
+  }
+`
+const PredictedHeader = styled.div`
   align-items: center;
   display: flex;
   justify-content: flex-start;
   & > h2 {
-    margin-right: 28px;
+    margin: 10px 28px 10px 0;
   }
 `
 const AttributesList = styled.ul`
