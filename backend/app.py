@@ -9,7 +9,7 @@ import threading
 from flask import Flask, request, jsonify, send_file, make_response
 from flask_cors import CORS
 from services import star_predict as stars
-from services import ols_stars_local
+from services import lasso_stars_local
 from services import knn
 from services import gh_api
 from services import plots
@@ -71,7 +71,7 @@ def get_predicted_project():
         # Star-prediction
         repo_dict = gh_api.find_repo_by_fullname_as_dict(name)
 
-        repo_dict['predicted_stars'] = ols_stars_local.predict_stars(name)
+        repo_dict['predicted_stars'] = lasso_stars_local.predict_stars(name)
         repo_dict['old_predicted_stars'] = stars.predict_dict(repo_dict) 
         repo_dict['knn_distances'] = computed_knn[0].tolist()
         repo_dict['knn_names'] = computed_knn[1].tolist()
@@ -84,9 +84,6 @@ def get_predicted_project():
             return 'Pickle file containing the model not found', 500
         else:
             return 'Something went wrong ¯\\_(ツ)_/¯', 500
-    except Exception as e:
-        print(traceback.format_exc())
-        return 'Something went wrong ¯\\_(ツ)_/¯', 500
 
 def _get_image_response(image_path):
     byte_io = plots.image_to_bytes(image_path)

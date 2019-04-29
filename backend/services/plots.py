@@ -1,10 +1,16 @@
+from sys import platform
+import matplotlib as mpl
+
+if platform == "darwin":  # OS X
+    mpl.use('TkAgg')
+
 import seaborn as sns 
 import pandas as pd 
 import os
 import io
 from pandas.core.frame import DataFrame
 
-images_folder = 'resources/images'
+images_folder = 'images-cache/images'
 
 def create_image_folder():
     if not os.path.exists(images_folder):

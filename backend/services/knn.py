@@ -2,15 +2,15 @@ import pickle
 import pandas as pd
 import numpy as np
 
-KNN_MODEL_PATH = 'models/knn/knn.pickle'
+KNN_MODEL_PATH = 'models/knn/knn.pkl'
 KNN_DATA_PATH = 'models/knn/knn_data.npy'
 KNN_LABELS_PATH = 'models/knn/knn_labels.csv'
-REPO_DATA = 'resources/repositories-rating.csv'
+REPO_DATA = 'data/repositories-rating.csv'
 
 _knn_model = pickle.load(open(KNN_MODEL_PATH, 'rb'))
 _knn_data = np.load(KNN_DATA_PATH)
 # Turn Dataframe with a single nameWithOwner column to Series
-_knn_labels = pd.read_csv(KNN_LABELS_PATH)['nameWithOwner']
+_knn_labels = pd.read_csv(KNN_LABELS_PATH)
 #_scores = pd.read_csv(REPO_DATA)['December 22, 2018']
 
 def compute_knn(nameWithOwner):

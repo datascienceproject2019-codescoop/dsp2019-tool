@@ -4,10 +4,8 @@ import numpy as np
 from typing import Dict, List
 from statsmodels.regression.linear_model import RegressionResultsWrapper
 
-OLS_MODEL_PATH = 'models/lasso_pickle'
-ENCODER_PATH = 'models/encoder.pickle'
-_ols_model = pickle.load(open(OLS_MODEL_PATH, 'rb'))
-_encoder = pickle.load(open(ENCODER_PATH, 'rb'))
+_ols_model = pickle.load(open('models/lasso/lasso.pkl', 'rb'))
+_encoder = pickle.load(open('models/lasso/encoder.pkl', 'rb'))
 test_data = None
 preprocessed = None
 prep_names = None
@@ -18,7 +16,7 @@ def get_test_data():
     global test_data
 
     if (test_data is None):
-        test_data = pd.read_csv('resources/repositories-1.4.0-2018-12-22-rating.csv')
+        test_data = pd.read_csv('data/repositories-1.4.0-2018-12-22-rating.csv')
         test_data = test_data.to_dict(orient='record')
 
     return test_data
@@ -28,7 +26,7 @@ def get_prep_data():
     global preprocessed
 
     if preprocessed is None:
-        preprocessed = pd.read_csv('resources/pre-processed_datax.csv', usecols=_FEATURES)
+        preprocessed = pd.read_csv('data/pre-processed_datax.csv', usecols=_FEATURES)
 
     return preprocessed
 
@@ -37,7 +35,7 @@ def get_prep_names():
     global prep_names
 
     if prep_names is None:
-        prep_names = pd.read_csv('resources/pre-processed_names.csv')
+        prep_names = pd.read_csv('data/pre-processed_names.csv')
 
     return prep_names
 

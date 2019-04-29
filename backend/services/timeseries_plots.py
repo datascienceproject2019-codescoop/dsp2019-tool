@@ -2,20 +2,24 @@ import os
 import time
 import pandas as pd
 import numpy as np
+from sys import platform
+import matplotlib as mpl
+
+if platform == "darwin":  # OS X
+    mpl.use('TkAgg')
+
 import matplotlib.pyplot as plt
 from datetime import datetime
 from github import Github
 from github import GithubException
 from services import gh_api
 
-
-
 LOWER_BOUND           = 1.791759469228055
 UPPER_BOUND           = 42.40071186221785
 TIMESTAMP_LOWER_BOUND = "2012-12-12 17:51:25"
 
-images_folder = "resources/images"
-csv_folder    = "resources/repositories-timeseries.csv"
+images_folder = "images-cache"
+csv_folder    = "data/repositories-timeseries.csv"
 data = None
 
 '''
