@@ -105,6 +105,19 @@ export class ProjectPage extends React.Component<IProps, IState> {
             <KNNTable names={p!.knn_names} distances={p!.knn_distances}/>
           </ChartContainer>
         </Wrapper>
+        <PlotContainer>
+          <h2>Rating timeline</h2>
+          <img src={`${process.env.REACT_APP_API_URL}/images/timeseries/rating?repo=${name}`}></img>
+          {/**
+            /api/images/timeseries/stars
+            /api/images/timeseries/forks
+            /api/images/timeseries/closedissues
+            /api/images/timeseries/commits
+            /api/images/timeseries/contributors
+            /api/images/timeseries/issues
+            /api/images/timeseries/watchers
+           */}
+        </PlotContainer>
       </Container>
     )
   }
@@ -155,4 +168,13 @@ const AttributesListItem: StyledComponentClass<{color: string}, ITheme> = styled
 `
 const ChartContainer = styled.div`
   margin: 0 0 0 0;
+`
+const PlotContainer = styled.div`
+  display: flex;
+  flex-direction:column;
+  align-items: center;
+  & > img {
+    width: 100%;
+    height: auto;
+  }
 `

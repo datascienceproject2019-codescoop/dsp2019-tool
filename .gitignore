@@ -104,7 +104,9 @@ venv.bak/
 .mypy_cache/
 
 models
+data
 tmp
+images-cache
 # dependencies
 node_modules
 

@@ -12,7 +12,7 @@ _test500 = None
 _api_address = 'https://api.github.com'
 _github = None
 
-def _get_github() -> Github:
+def get_github() -> Github:
     import os
     from github.GithubException import BadCredentialsException
 
@@ -125,8 +125,13 @@ def find_repo_by_fullname_as_dict(f_name: str) -> Dict[str, int]:
     """
     Built on _featureList presented in star_predict.py-file.
     """
+
+    if os.environ.get('GITHUB_API_KEY') == None:
+        test_df = get_test_data()
+        return test_df.to_dict(orient='records')[0]
+
     repo_as_dict = {}
-    gh = _get_github()
+    gh = get_github()
 
     repo = gh.get_repo(f_name)
     langs = _get_repo_langs(repo)
