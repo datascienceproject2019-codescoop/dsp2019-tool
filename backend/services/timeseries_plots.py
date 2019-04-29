@@ -427,7 +427,7 @@ def get_open_issues_timestamps(github_client, repository_name, max_open_issues =
     except GithubException as error:
 
         if error.status == 404:
-            return None, None, None, None, None, None, None, None
+            return None, None, None, None
 
         # most likely a 502
         else:
@@ -693,6 +693,8 @@ def create_stars_timeseries_plot(dataframe, github_client, repository_name):
         if len(timeseries) == 4:
 
             labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018']
+            
+            plt.rcParams.update({'font.size': 22})
 
             fig = plt.figure(figsize = (20, 10))
             ax  = fig.add_subplot(1, 1, 1)
@@ -709,6 +711,8 @@ def create_stars_timeseries_plot(dataframe, github_client, repository_name):
 
             # else the length of the timeseries should be 5
             labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018', 'Now']
+            
+            plt.rcParams.update({'font.size': 22})
 
             fig = plt.figure(figsize = (20, 10))
             ax  = fig.add_subplot(1, 1, 1)
@@ -737,6 +741,8 @@ def create_forks_timeseries_plot(dataframe, github_client, repository_name):
         if len(timeseries) == 4:
 
             labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018']
+            
+            plt.rcParams.update({'font.size': 22})
 
             fig = plt.figure(figsize = (20, 10))
             ax  = fig.add_subplot(1, 1, 1)
@@ -754,6 +760,8 @@ def create_forks_timeseries_plot(dataframe, github_client, repository_name):
             # else the length of the timeseries should be 5
             labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018', 'Now']
 
+            plt.rcParams.update({'font.size': 22})
+            
             fig = plt.figure(figsize = (20, 10))
             ax  = fig.add_subplot(1, 1, 1)
             plt.grid()
@@ -782,6 +790,8 @@ def create_watchers_timeseries_plot(dataframe, github_client, repository_name):
         if len(timeseries) == 4:
 
             labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018']
+            
+            plt.rcParams.update({'font.size': 22})
 
             fig = plt.figure(figsize = (20, 10))
             ax  = fig.add_subplot(1, 1, 1)
@@ -798,6 +808,8 @@ def create_watchers_timeseries_plot(dataframe, github_client, repository_name):
 
             # else the length of the timeseries should be 5
             labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018', 'Now']
+            
+            plt.rcParams.update({'font.size': 22})
 
             fig = plt.figure(figsize = (20, 10))
             ax  = fig.add_subplot(1, 1, 1)
@@ -827,6 +839,8 @@ def create_contributors_timeseries_plot(dataframe, github_client, repository_nam
         if len(timeseries) == 4:
 
             labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018']
+            
+            plt.rcParams.update({'font.size': 22})
 
             fig = plt.figure(figsize = (20, 10))
             ax  = fig.add_subplot(1, 1, 1)
@@ -842,6 +856,8 @@ def create_contributors_timeseries_plot(dataframe, github_client, repository_nam
         else:
             # else the length of the timeseries should be 5
             labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018', 'Now']
+            
+            plt.rcParams.update({'font.size': 22})
 
             fig = plt.figure(figsize = (20, 10))
             ax  = fig.add_subplot(1, 1, 1)
@@ -872,12 +888,14 @@ def create_rating_timeseries_plot(dataframe, github_client, repository_name):
         if len(timeseries) == 4:
 
             labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018']
+            
+            plt.rcParams.update({'font.size': 22})
 
             fig = plt.figure(figsize = (20, 10))
             ax  = fig.add_subplot(1, 1, 1)
             plt.grid()
             plt.xlabel("Date")
-            plt.ylabel("Number of Rating")
+            plt.ylabel("Rating")
             plt.title("Rating for {}".format(repository_name))
             plt.plot(range(1, 5), timeseries, linewidth = 5)
             ax.set_xticks(range(1, 5))
@@ -888,12 +906,14 @@ def create_rating_timeseries_plot(dataframe, github_client, repository_name):
 
             # else the length of the timeseries should be 5
             labels = ['June 15, 2017', 'November 29, 2017', 'March 13, 2018', 'December 22, 2018', 'Now']
+            
+            plt.rcParams.update({'font.size': 22})
 
             fig = plt.figure(figsize = (20, 10))
             ax  = fig.add_subplot(1, 1, 1)
             plt.grid()
             plt.xlabel("Date")
-            plt.ylabel("Number of Rating")
+            plt.ylabel("Rating")
             plt.title("Rating for {}".format(repository_name))
             plt.plot(range(1, 6), timeseries, linewidth = 5)
             ax.set_xticks(range(1, 6))
@@ -920,6 +940,8 @@ def create_commits_timeseries_plot(github_client, repository_name):
 
             if len(timestamps) > 1:
 
+                plt.rcParams.update({'font.size': 22})
+                
                 fig = plt.figure(figsize = (20, 10))
                 ax  = fig.add_subplot(1, 1, 1)
                 plt.grid()
@@ -930,6 +952,8 @@ def create_commits_timeseries_plot(github_client, repository_name):
                 fig.savefig(path)
 
             else:
+                
+                plt.rcParams.update({'font.size': 22})
 
                 fig = plt.figure(figsize = (20, 10))
                 ax  = fig.add_subplot(1, 1, 1)
@@ -941,6 +965,8 @@ def create_commits_timeseries_plot(github_client, repository_name):
                 fig.savefig(path)
 
         else:
+            
+            plt.rcParams.update({'font.size': 22})
 
             fig = plt.figure(figsize = (20, 10))
             ax  = fig.add_subplot(1, 1, 1)
@@ -968,6 +994,8 @@ def create_open_issues_timeseries_plot(github_client, repository_name):
         if lower_open is not None:
 
             if len(open_issues) > 1:
+                
+                plt.rcParams.update({'font.size': 22})
 
                 fig = plt.figure(figsize = (20, 10))
                 ax  = fig.add_subplot(1, 1, 1)
@@ -979,6 +1007,8 @@ def create_open_issues_timeseries_plot(github_client, repository_name):
                 fig.savefig(path)
 
             else:
+                
+                plt.rcParams.update({'font.size': 22})
 
                 fig = plt.figure(figsize = (20, 10))
                 ax  = fig.add_subplot(1, 1, 1)
@@ -990,6 +1020,8 @@ def create_open_issues_timeseries_plot(github_client, repository_name):
                 fig.savefig(path)
 
         else:
+            
+            plt.rcParams.update({'font.size': 22})
 
             fig = plt.figure(figsize = (20, 10))
             ax  = fig.add_subplot(1, 1, 1)
@@ -1017,6 +1049,8 @@ def create_closed_issues_timeseries_plot(github_client, repository_name):
         if lower_closed is not None:
 
             if len(closed_issues) > 1:
+                
+                plt.rcParams.update({'font.size': 22})              
 
                 fig = plt.figure(figsize = (20, 10))
                 ax  = fig.add_subplot(1, 1, 1)
@@ -1029,6 +1063,8 @@ def create_closed_issues_timeseries_plot(github_client, repository_name):
 
             else:
 
+                plt.rcParams.update({'font.size': 22})
+               
                 fig = plt.figure(figsize = (20, 10))
                 ax  = fig.add_subplot(1, 1, 1)
                 plt.grid()
@@ -1039,6 +1075,8 @@ def create_closed_issues_timeseries_plot(github_client, repository_name):
                 fig.savefig(path)
 
         else:
+            
+            plt.rcParams.update({'font.size': 22})
 
             fig = plt.figure(figsize = (20, 10))
             ax  = fig.add_subplot(1, 1, 1)
@@ -1049,6 +1087,7 @@ def create_closed_issues_timeseries_plot(github_client, repository_name):
             fig.savefig(path)
 
     return path
+
 
 def generate_functions(repository_name):
     import traceback
