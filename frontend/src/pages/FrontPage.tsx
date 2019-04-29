@@ -3,8 +3,8 @@ import { inject, observer } from 'mobx-react'
 import styled from '../theme/styled'
 import { MdSearch } from 'react-icons/md'
 import { GoMarkGithub } from 'react-icons/go'
-import { Link } from 'react-router-dom'
 
+import { FeaturedProjectsTable } from '../components/FeaturedProjectsTable'
 import { Button } from '../elements/Button'
 import { Input } from '../elements/Input'
 
@@ -101,23 +101,6 @@ export class FrontPage extends React.Component<IProps, IState> {
         <Divider />
         <DatasetsContainer>
           <Dataset>
-            <h3>Libraries.io data of 2018-03-12 (500 000 projects) <a href="https://libraries.io/data">source</a></h3>
-            <SearchBox>
-              <label>Search</label>
-              <Input placeholder="Project name" icon={<MdSearch size={24}/>} iconPadding="38px" fullWidth
-                  value={this.state.searchText || ''}
-                  onChange={this.handleSearch}/>
-            </SearchBox>
-            <h2>Featured projects</h2>
-            <FeaturedList >
-              { projects.map((p, i) =>
-              <li key={i} className={shownResults[i] ? '' : 'hidden'}>
-                <Link to={`projects/${p['Name with Owner']}`}>{p['Name with Owner']}</Link>
-              </li>
-              )}
-            </FeaturedList >
-          </Dataset>
-          <Dataset>
             <h3>Github data (no KNN, slower but up-to-date)</h3>
             <SearchBox>
               <label>Owner and repository name</label>
@@ -126,6 +109,17 @@ export class FrontPage extends React.Component<IProps, IState> {
                   onChange={val => this.setState({ githubInput: val })}/>
             </SearchBox>
             <GithubButton>Find</GithubButton>
+          </Dataset>
+          <Dataset>
+            <h3>Libraries.io data of 2018-03-12 (500 000 projects) <a href="https://libraries.io/data">source</a></h3>
+            <SearchBox>
+              <label>Search</label>
+              <Input placeholder="Project name" icon={<MdSearch size={24}/>} iconPadding="38px" fullWidth
+                  value={this.state.searchText || ''}
+                  onChange={this.handleSearch}/>
+            </SearchBox>
+            <h2>Featured projects</h2>
+            <FeaturedProjectsTable projects={projects} shownProjects={shownResults}/>
           </Dataset>
         </DatasetsContainer>
       </Container>
@@ -166,12 +160,12 @@ const Description = styled.article`
 `
 const DatasetsContainer = styled.section`
   display: flex;
-  @media only screen and (max-width: 720px) {
-    flex-direction: column;
-    flex-flow: column-reverse;
-  }
+  flex-direction: column;
 `
 const Dataset = styled.div`
+  &:first-child {
+    margin-bottom: 1.4em;
+  }
   & > h3 {
     margin: 0 0 1em 0;
   }
@@ -184,13 +178,4 @@ const SearchBox = styled.div`
   flex-direction: column;
   display: flex;
   width: 300px;
-`
-const FeaturedList = styled.ul`
-  .hidden {
-    visibility: hidden;
-    display: none;
-  }
-  & > li {
-    margin: 5px;
-  }
 `

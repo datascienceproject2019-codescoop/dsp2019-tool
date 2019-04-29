@@ -35,7 +35,7 @@ def get_test_data() -> DataFrame:
     global _test500
 
     if (_test500 is None):
-        _test500 = pd.read_csv('resources/data500.csv')
+        _test500 = pd.read_csv('resources/grouped-featured-projects.csv')
 
     return _test500
 
