@@ -39,7 +39,7 @@ def get_projects():
 
 
 def _get_scores(repo_list):
-    #REPO_DATA = 'resources/repositories-rating.csv'
+    #REPO_DATA = 'data/repositories-rating.csv'
     #score_column = 'December 22, 2018'
     #scores = pd.read_csv(REPO_DATA)
 
@@ -95,7 +95,7 @@ def _get_image_response(image_path):
 
 @app.route('/api/images/sns_image', methods=['GET'])
 def get_sns_plot_image():
-    projects = pd.read_pickle('resources/seaborn_dataframe1.pkl')
+    projects = pd.read_pickle('data/seaborn_dataframe1.pkl')
 
     sns_path = plots.create_sns_plot(projects)
 
@@ -106,7 +106,7 @@ def get_sns_plot_image():
 
 @app.route('/api/images/star_issue_image', methods=['GET'])
 def get_star_issue_image():
-    data = pd.read_pickle('resources/issues_data.pkl')
+    data = pd.read_pickle('data/issues_data.pkl')
 
     plot_path = plots.create_issues_stars_plot(data)
 
