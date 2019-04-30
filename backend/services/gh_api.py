@@ -54,7 +54,7 @@ def _get_pages_enabled(repo: Repository) -> int:
     GET /repos/:owner/:repo/pages
     """
     address = _api_address + '/repos/' + repo.full_name + '/pages'
-    response = json.loads(requests.get(address).content)
+    response = json.loads(requests.get(address).content.decode('utf-8'))
     
     try:
         if response['message'] == 'Not Found':
