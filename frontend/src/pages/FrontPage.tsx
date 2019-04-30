@@ -3,6 +3,7 @@ import { inject, observer } from 'mobx-react'
 import styled from '../theme/styled'
 import { MdSearch } from 'react-icons/md'
 import { GoMarkGithub } from 'react-icons/go'
+import { RouteComponentProps } from 'react-router'
 
 import { FeaturedProjectsTable } from '../components/FeaturedProjectsTable'
 import { Button } from '../elements/Button'
@@ -27,7 +28,7 @@ interface IState {
   projecStore: stores.projectStore,
 }))
 @observer
-export class FrontPage extends React.Component<IProps, IState> {
+export class FrontPage extends React.Component<IProps & RouteComponentProps<{}>, IState> {
   state = {
     loading: true,
     error: '',
@@ -59,6 +60,9 @@ export class FrontPage extends React.Component<IProps, IState> {
       searchText: input,
       shownResults: this.props.projecStore!.projects.map(p => this.projectIncludesString(p, input))
     })
+  }
+  goToGithubInput = () => {
+    this.props.history.push(`projects/${this.state.githubInput}`)
   }
   render() {
     const { projects } = this.props.projecStore!
@@ -108,7 +112,7 @@ export class FrontPage extends React.Component<IProps, IState> {
                   value={this.state.githubInput || ''}
                   onChange={val => this.setState({ githubInput: val })}/>
             </SearchBox>
-            <GithubButton>Find</GithubButton>
+            <GithubButton onClick={this.goToGithubInput}>Find</GithubButton>
           </Dataset>
           <Dataset>
             <h3>Libraries.io data of 2018-03-12 (500 000 projects) <a href="https://libraries.io/data">source</a></h3>
