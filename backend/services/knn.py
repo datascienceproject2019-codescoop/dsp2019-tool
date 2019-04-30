@@ -14,7 +14,7 @@ _knn_labels = pd.read_csv(KNN_LABELS_PATH)
 #_scores = pd.read_csv(REPO_DATA)['December 22, 2018']
 
 def compute_knn(nameWithOwner):
-    found = _knn_labels[_knn_labels == nameWithOwner]
+    found = _knn_labels[_knn_labels['nameWithOwner'] == nameWithOwner]
 
     if len(found) == 0:
         return np.array([]), np.array([])
