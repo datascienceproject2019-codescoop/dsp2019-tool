@@ -13,6 +13,7 @@ interface IProps {
 class FeaturedProjectsTableClass extends React.PureComponent<IProps> {
   render() {
     const { projects, shownProjects } = this.props
+    console.log('render')
     return (
       <table className={this.props.className}>
         <thead>
@@ -40,7 +41,7 @@ class FeaturedProjectsTableClass extends React.PureComponent<IProps> {
 
 const Row = styled.tr`
   margin: 5px;
-  .hidden {
+  &.hidden {
     visibility: hidden;
     display: none;
   }
